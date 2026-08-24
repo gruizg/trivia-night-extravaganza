@@ -10,4 +10,3 @@
 ## Frontend
 - Next.js
 - Socket.io*
-

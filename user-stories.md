@@ -37,7 +37,6 @@
 - Players can manually wager points for final trivia
 - Players will see their final ranking after host announces
 
-
 ## Stretch*
 - Users can create an account and log in
 
