@@ -3,3 +3,10 @@ create database trivia_test;
 use trivia_test;
 
 --TODO: IMPLEMENT
+
+delimiter //
+create procedure set_known_good_state()
+begin
+
+end //
+delimiter ;
