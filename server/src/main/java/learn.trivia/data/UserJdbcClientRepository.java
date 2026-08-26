@@ -11,4 +11,7 @@ public class UserJdbcClientRepository implements UserRepository {
     public UserJdbcClientRepository(JdbcClient client) {
         this.client = client;
     }
+
+    //TODO: IMPLEMENT
+
 }
