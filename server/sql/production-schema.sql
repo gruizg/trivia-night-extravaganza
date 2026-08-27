@@ -11,8 +11,8 @@ create table `user` (
 
 create table theme (
     theme_id        int primary key auto_increment,
-    thm_title       text not null,
-    thm_description text,
+    theme_title       text not null,
+    theme_description text,
     user_id         int  null,
     constraint fk_theme_user
         foreign key (user_id)
@@ -23,12 +23,12 @@ create table theme (
 
 create table question (
     question_id int primary key auto_increment,
-    qstn_category text not null,
-    qstn_prompt text not null,
-    qstn_answer text not null,
-    qstn_type text not null,
-    qstn_round int not null,
-    qstn_order int not null,
+    question_category text not null,
+    question_prompt text not null,
+    question_answer text not null,
+    question_type text not null,
+    question_round int not null,
+    question_order int not null,
     theme_id int not null,
     constraint fk_question_theme
         foreign key (theme_id)
@@ -43,11 +43,17 @@ create table game (
     host_token text not null,
     game_status text,
     current_round int,
-    current_question int,
+    current_question_id int null,
     theme_id int null,
-    constraint fk_theme_game
+    constraint fk_game_theme
         foreign key (theme_id)
         references theme(theme_id)
+        on delete set null
+        on update cascade,
+
+    constraint fk_game_question
+        foreign key (current_question_id)
+        references question(question_id)
         on delete set null
         on update cascade
 );
@@ -67,10 +73,10 @@ create table team (
 
 create table response (
     response_id int primary key auto_increment,
-    rsp_answer text,
-    rsp_wager int,
-    rsp_correct boolean,
-    rsp_points int,
+    response_answer text,
+    response_wager int,
+    response_correct boolean,
+    response_points int,
     team_id int not null,
     question_id int not null,
     constraint fk_response_team
