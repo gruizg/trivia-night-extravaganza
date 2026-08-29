@@ -1,6 +1,7 @@
 package learn.trivia.controllers;
 
 import learn.trivia.data.GameRepository;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,5 +22,10 @@ class GameControllerTest {
     MockMvc mvc;
 
     //TODO: IMPLEMENT TESTS
+
+    @Test
+    void check() {
+
+    }
 
 }
