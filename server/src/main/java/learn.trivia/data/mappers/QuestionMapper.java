@@ -18,7 +18,7 @@ public class QuestionMapper implements RowMapper<Question> {
         question.setQuestionCategory(rs.getString("question_category"));
         question.setQuestionPrompt(rs.getString("question_prompt"));
         question.setQuestionAnswer(rs.getString("question_answer"));
-        question.setQuestionType(QuestionType.valueOf(rs.getString("question_type")));
+        question.setQuestionType(QuestionType.findByName(rs.getString("question_type")));
         question.setQuestionRound(rs.getInt("question_round"));
         question.setQuestionOrder(rs.getInt("question_order"));
         question.setTheme(new ThemeMapper().mapRow(rs, rowNum));
