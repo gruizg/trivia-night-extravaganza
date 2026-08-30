@@ -1,9 +1,11 @@
-import Navbar from "@/app/components/navbar/Navbar";
 
 export default function About() {
 return (
-    <>
-        <h1>About</h1>
-    </>
+    <div className={"page-container h-full"}>
+
+            <h1>Break</h1>
+            <p>post</p>
+
+    </div>
     );
 }

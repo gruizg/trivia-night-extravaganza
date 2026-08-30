@@ -1,9 +1,7 @@
-import Navbar from "@/app/components/navbar/Navbar";
-
 export default function Rules() {
 return (
-    <>
+    <div>
         <h1>Rules</h1>
-    </>
+    </div>
     );
 }

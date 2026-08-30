@@ -1,5 +1,3 @@
-import Navbar from "@/app/components/navbar/Navbar";
-
 export default function Play() {
 return (
     <div>
