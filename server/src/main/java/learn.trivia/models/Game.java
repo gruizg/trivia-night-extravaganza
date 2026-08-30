@@ -7,14 +7,14 @@ public class Game {
     private int gameId;
     private String gameCode;
     private String hostToken;
-    private String gameStatus;
+    private GameStatus gameStatus;
     private int currentRound;
     private Question currentQuestion;
     private Theme theme;
 
     public Game() {}
 
-    public Game(int gameId, String gameCode, String hostToken, String gameStatus, int currentRound, Question currentQuestion, Theme theme) {
+    public Game(int gameId, String gameCode, String hostToken, GameStatus gameStatus, int currentRound, Question currentQuestion, Theme theme) {
         this.gameId = gameId;
         this.gameCode = gameCode;
         this.hostToken = hostToken;
@@ -48,11 +48,11 @@ public class Game {
         this.hostToken = hostToken;
     }
 
-    public String getGameStatus() {
+    public GameStatus getGameStatus() {
         return gameStatus;
     }
 
-    public void setGameStatus(String gameStatus) {
+    public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
 

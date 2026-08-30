@@ -15,7 +15,7 @@ class GameTest {
         assertEquals(1, game.getGameId());
         assertEquals("code", game.getGameCode());
         assertEquals("token", game.getHostToken());
-        assertEquals("lobby", game.getGameStatus());
+        assertEquals(GameStatus.LOBBY, game.getGameStatus());
         assertEquals(1, game.getCurrentRound());
         assertEquals(makeQuestion(), game.getCurrentQuestion());
         assertEquals(makeTheme(), game.getTheme());
@@ -24,7 +24,7 @@ class GameTest {
     @Test
     void shouldBeSameGame() {
         Game game1 = makeGame();
-        Game game2 = new Game(1, "code", "token", "lobby", 1, makeQuestion(), makeTheme());
+        Game game2 = new Game(1, "code", "token", GameStatus.LOBBY, 1, makeQuestion(), makeTheme());
 
         assertEquals(game1, game2);
     }
@@ -63,7 +63,7 @@ class GameTest {
         void notEqualWhenStatusIsDifferent() {
             Game game1 = makeGame();
             Game game2 = makeGame();
-            game2.setGameStatus("playing");
+            game2.setGameStatus(GameStatus.QUESTION);
 
             assertNotEquals(game1, game2);
         }
