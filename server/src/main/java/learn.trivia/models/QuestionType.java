@@ -2,10 +2,10 @@ package learn.trivia.models;
 
 public enum QuestionType {
 
-    NORMAL("Normal"),
-    HALFTIME("Halftime"),
-    FINAL("Final"),
-    TIEBREAKER("Tiebreaker");
+    NORMAL("normal"),
+    HALFTIME("halftime"),
+    FINAL("final"),
+    TIEBREAKER("tiebreaker");
 
     private final String name;
 
