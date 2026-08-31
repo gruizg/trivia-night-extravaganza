@@ -3,10 +3,10 @@ use trivia;
 INSERT INTO user (username, email, password)
 VALUES ('user', 'email', 'hashed-password');
 
-INSERT INTO theme (thm_title, thm_description, user_id)
+INSERT INTO theme (theme_title, theme_description, user_id)
 VALUES ('General Knowledge & Trivia Night', 'A standard 6-round trivia game with halftime and final questions.', 1);
 
-INSERT INTO question (qstn_category, qstn_prompt, qstn_answer, qstn_type, qstn_round, qstn_order, theme_id)
+INSERT INTO question (question_category, question_prompt, question_answer, question_type, question_round, question_order, theme_id)
 VALUES ('Science', 'What planet is known as the Red Planet?', 'Mars', 'normal', 1, 1, 1),
        ('Science', 'What gas do plants absorb from the atmosphere for photosynthesis?', 'Carbon Dioxide', 'normal', 1, 2, 1),
        ('Science', 'What is the hardest natural substance on Earth?', 'Diamond', 'normal', 1, 3, 1),

@@ -2,10 +2,10 @@ package learn.trivia.models;
 
 public enum QuestionType {
 
-    NORMAL("Normal"),
-    HALFTIME("Halftime"),
-    FINAL("Final"),
-    TIEBREAKER("Tiebreaker");
+    NORMAL("normal"),
+    HALFTIME("halftime"),
+    FINAL("final"),
+    TIEBREAKER("tiebreaker");
 
     private final String name;
 
@@ -23,7 +23,7 @@ public enum QuestionType {
                 return question;
             }
         }
-        String message = String.format("No QuestionType with name: %s.", name);
+        String message = String.format("No question type with name: %s.", name);
         throw new RuntimeException(message);
     }
 }

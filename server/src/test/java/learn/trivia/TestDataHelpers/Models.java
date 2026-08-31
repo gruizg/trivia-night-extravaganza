@@ -17,7 +17,7 @@ public class Models {
     }
 
     public static Game makeGame() {
-        return new Game(1, "code", "token", "lobby", 1, makeQuestion(), makeTheme());
+        return new Game(1, "code", "token", GameStatus.LOBBY, 1, makeQuestion(), makeTheme());
     }
 
     public static Team makeTeam() {
