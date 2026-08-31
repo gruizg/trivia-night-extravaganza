@@ -1,6 +1,6 @@
 export default function Contact() {
 return (
-    <div>
+    <div className={"page-container"}>
         <h1>Contact Us</h1>
     </div>
     );

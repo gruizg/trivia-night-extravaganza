@@ -29,7 +29,11 @@ body {
 /*}*/
 
 .page-container {
-  @apply flex-1 border-2 border-solid border-[#ff1493] rounded-xl p-11;
+  @apply h-full flex-1 border-2 border-solid border-[#ff1493] rounded-xl p-11;
+}
+
+.theme-btn, .join-btn {
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
 }
 
 @layer components {
