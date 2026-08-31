@@ -34,3 +34,39 @@ VALUES ('Science', 'What planet is known as the Red Planet?', 'Mars', 'normal', 
        ('Sports', 'In chess, which piece can only move diagonally?', 'Bishop', 'normal', 6, 3, 1),
 
        ('Mixed Knowledge', 'Which chemical element has the symbol "Au" on the periodic table?', 'Gold', 'final', 7, 1, 1);
+
+
+INSERT INTO user (username, email, password)
+VALUES ('quizmaster99', 'quizmaster@example.com', '$2a$12$eImiTXuWVxfM37uY4JANjO3p9c7z5d.p2k10Z9G8L8W.1v4kE2w5m');
+
+INSERT INTO theme (theme_title, theme_description, user_id)
+VALUES ('Pop Culture & Entertainment Showcase', 'A fast-paced 6-round pop culture trivia session spanning movies, gaming, and TV.', 2);
+
+INSERT INTO question (question_category, question_prompt, question_answer, question_type, question_round, question_order, theme_id)
+VALUES ('Video Games', 'What is the best-selling video game of all time?', 'Minecraft', 'normal', 1, 1, 2),
+       ('Video Games', 'What is the name of the protagonist in The Legend of Zelda series?', 'Link', 'normal', 1, 2, 2),
+       ('Video Games', 'Which company developed the original Arcade game Donkey Kong?', 'Nintendo', 'normal', 1, 3, 2),
+
+       ('Blockbuster Movies', 'What iconic film franchise features the fictional metal Vibranium?', 'Marvel Cinematic Universe', 'normal', 2, 1, 2),
+       ('Blockbuster Movies', 'Who directed the 1993 sci-fi film Jurassic Park?', 'Steven Spielberg', 'normal', 2, 2, 2),
+       ('Blockbuster Movies', 'What planet is Luke Skywalker''s home planet in Star Wars?', 'Tatooine', 'normal', 2, 3, 2),
+
+       ('Television', 'What is the name of the fictional town where Stranger Things is set?', 'Hawkins', 'normal', 3, 1, 2),
+       ('Television', 'Which sitcom features the catchphrase "Bazinga!"?', 'The Big Bang Theory', 'normal', 3, 2, 2),
+       ('Television', 'In Dunder Mifflin from The Office, what is Dwight Schrute''s middle name?', 'Kurt', 'normal', 3, 3, 2),
+
+       ('Entertainment', 'List the top 4 highest-grossing film franchises of all time.', 'Marvel Cinematic Universe, Star Wars, Harry Potter, Spider-Man', 'halftime', 0, 1, 2),
+
+       ('Music Trivia', 'Which artist released the record-breaking album "Thriller" in 1982?', 'Michael Jackson', 'normal', 4, 1, 2),
+       ('Music Trivia', 'What music festival took place in upstate New York in 1969?', 'Woodstock', 'normal', 4, 2, 2),
+       ('Music Trivia', 'Which pop star''s fanbase is officially known as "Swifties"?', 'Taylor Swift', 'normal', 4, 3, 2),
+
+       ('Animation & Cartoons', 'What type of animal is BoJack from BoJack Horseman?', 'Horse', 'normal', 5, 1, 2),
+       ('Animation & Cartoons', 'Which Japanese animation studio created Spirited Away and My Neighbor Totoro?', 'Studio Ghibli', 'normal', 5, 2, 2),
+       ('Animation & Cartoons', 'What is the name of SpongeBob SquarePants'' pet snail?', 'Gary', 'normal', 5, 3, 2),
+
+       ('Superheroes & Comics', 'What is Batman''s real name?', 'Bruce Wayne', 'normal', 6, 1, 2),
+       ('Superheroes & Comics', 'Which comic publisher created the X-Men, Spider-Man, and Fantastic Four?', 'Marvel Comics', 'normal', 6, 2, 2),
+       ('Superheroes & Comics', 'What is the weakness of Superman?', 'Kryptonite', 'normal', 6, 3, 2),
+
+       ('Culminating Pop Culture', 'What year did YouTube launch to the general public?', '2005', 'final', 7, 1, 2);
