@@ -1,1 +1,16 @@
+@url = http://localhost:8080/api/theme
+
+GET {{url}} HTTP/1.1
+
+###
+
+GET {{url}}/1 HTTP/1.1
+
+###
+
+GET {{url}}/question/all/1 HTTP/1.1
+
+###
+
+GET {{url}}/question/1 HTTP/1.1
 #TODO: IMPLEMENT
