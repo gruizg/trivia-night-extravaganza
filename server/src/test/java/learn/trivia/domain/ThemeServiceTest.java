@@ -28,7 +28,7 @@ class ThemeServiceTest {
         @Test
         void shouldFindThemeById() {
 
-            Theme expected = makeTheme();
+            Theme expected = makeExistingTheme();
 
             Theme actual = service.findThemeById(1);
 
@@ -46,7 +46,7 @@ class ThemeServiceTest {
 
         @Test
         void shouldFindAllThemes() {
-            Theme expected = makeTheme();
+            Theme expected = makeExistingTheme();
 
             List<Theme> actual = service.findAllThemes();
 
@@ -59,7 +59,7 @@ class ThemeServiceTest {
         @Test
         void shouldFindQuestionById() {
 
-            Question expected = makeQuestion();
+            Question expected = makeExistingQuestion();
 
             Question actual = service.findQuestionById(1);
 
@@ -78,7 +78,7 @@ class ThemeServiceTest {
         @Test
         void shouldFindQuestionsByThemeId() {
 
-            Question expected = makeQuestion();
+            Question expected = makeExistingQuestion();
 
             List<Question> actual = service.findQuestionsByThemeId(1);
 

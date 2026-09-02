@@ -6,16 +6,15 @@ import learn.trivia.models.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static learn.trivia.TestDataHelpers.Models.makeTheme;
-import static learn.trivia.TestDataHelpers.Models.makeUser;
+import static learn.trivia.TestDataHelpers.Models.*;
 
 public class ThemeRepositoryDouble implements ThemeRepository {
 
     ArrayList<Theme> themes = new ArrayList<>();
 
     public ThemeRepositoryDouble() {
-        themes.add(makeTheme());
-        themes.add(new Theme(2, "title 2", "description 2", makeUser()));
+        themes.add(makeExistingTheme());
+        themes.add(new Theme(2, "title 2", "description 2", makeExistingUser()));
     }
 
     @Override
