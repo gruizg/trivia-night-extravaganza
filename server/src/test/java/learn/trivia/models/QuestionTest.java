@@ -10,7 +10,7 @@ class QuestionTest {
 
     @Test
     void shouldCorrectlyInitializeFields() {
-        Question question = makeQuestion();
+        Question question = makeExistingQuestion();
 
         assertEquals(1, question.getQuestionId());
         assertEquals("category", question.getQuestionCategory());
@@ -19,13 +19,13 @@ class QuestionTest {
         assertEquals(QuestionType.NORMAL, question.getQuestionType());
         assertEquals(1, question.getQuestionRound());
         assertEquals(1, question.getQuestionOrder());
-        assertEquals(makeTheme(), question.getTheme());
+        assertEquals(makeExistingTheme(), question.getTheme());
     }
 
     @Test
     void shouldBeSameQuestion() {
-        Question question1 = makeQuestion();
-        Question question2 = new Question(1, "category", "prompt", "answer", QuestionType.NORMAL, 1, 1, makeTheme());
+        Question question1 = makeExistingQuestion();
+        Question question2 = new Question(1, "category", "prompt", "answer", QuestionType.NORMAL, 1, 1, makeExistingTheme());
 
         assertEquals(question1, question2);
     }
@@ -35,8 +35,8 @@ class QuestionTest {
 
         @Test
         void notEqualWhenIdIsDifferent() {
-            Question question1 = makeQuestion();
-            Question question2 = makeQuestion();
+            Question question1 = makeExistingQuestion();
+            Question question2 = makeExistingQuestion();
             question2.setQuestionId(2);
 
             assertNotEquals(question1, question2);
@@ -44,8 +44,8 @@ class QuestionTest {
 
         @Test
         void notEqualWhenCategoryIsDifferent() {
-            Question question1 = makeQuestion();
-            Question question2 = makeQuestion();
+            Question question1 = makeExistingQuestion();
+            Question question2 = makeExistingQuestion();
             question2.setQuestionCategory("category2");
 
             assertNotEquals(question1, question2);
@@ -53,8 +53,8 @@ class QuestionTest {
 
         @Test
         void notEqualWhenPromptIsDifferent() {
-            Question question1 = makeQuestion();
-            Question question2 = makeQuestion();
+            Question question1 = makeExistingQuestion();
+            Question question2 = makeExistingQuestion();
             question2.setQuestionPrompt("prompt2");
 
             assertNotEquals(question1, question2);
@@ -62,8 +62,8 @@ class QuestionTest {
 
         @Test
         void notEqualWhenAnswerIsDifferent() {
-            Question question1 = makeQuestion();
-            Question question2 = makeQuestion();
+            Question question1 = makeExistingQuestion();
+            Question question2 = makeExistingQuestion();
             question2.setQuestionAnswer("answer2");
 
             assertNotEquals(question1, question2);
@@ -71,8 +71,8 @@ class QuestionTest {
 
         @Test
         void notEqualWhenTypeIsDifferent() {
-            Question question1 = makeQuestion();
-            Question question2 = makeQuestion();
+            Question question1 = makeExistingQuestion();
+            Question question2 = makeExistingQuestion();
             question2.setQuestionType(QuestionType.HALFTIME);
 
             assertNotEquals(question1, question2);
@@ -80,9 +80,9 @@ class QuestionTest {
 
         @Test
         void notEqualWhenThemeIsDifferent() {
-            Question question1 = makeQuestion();
-            Question question2 = makeQuestion();
-            Theme theme = makeTheme();
+            Question question1 = makeExistingQuestion();
+            Question question2 = makeExistingQuestion();
+            Theme theme = makeExistingTheme();
             theme.setThemeId(2);
             question2.setTheme(theme);
 
