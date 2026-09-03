@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 public class ThemeMapper implements RowMapper<Theme> {
 
+    private final UserMapper userMapper = new UserMapper();
+
     @Override
     public Theme mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -18,7 +20,7 @@ public class ThemeMapper implements RowMapper<Theme> {
         theme.setThemeDescription(rs.getString("theme_description"));
         int userId = rs.getInt("user_id");
         if (!rs.wasNull()){
-            theme.setUser(new UserMapper().mapRow(rs, rowNum));
+            theme.setUser(userMapper.mapRow(rs, rowNum));
         } else {
             theme.setUser(null);
         }
