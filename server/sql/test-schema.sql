@@ -135,6 +135,3 @@ begin
 
 end //
 delimiter ;
-
-
-select * from game;
