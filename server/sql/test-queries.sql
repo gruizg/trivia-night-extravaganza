@@ -57,3 +57,22 @@ from game g
     left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
     left join user u on th.user_id = u.user_id
 where g.game_id = ?;
+
+select g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+       th.theme_id, th.theme_title, th.theme_description,
+       u.user_id, u.username, u.email, u.password
+
+from game g
+         left join theme th on g.theme_id = th.theme_id
+         left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
+         left join user u on th.user_id = u.user_id
+where g.game_code = ?;
+
+select exists(select 1 from game where game_code = ?);
+
+update game set
+                game_status = ?,
+                current_round = ?,
+                current_question_id = ?
+where game_id = ?;
