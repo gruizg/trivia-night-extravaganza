@@ -8,6 +8,9 @@ import java.sql.SQLException;
 
 public class ResponseMapper implements RowMapper<Response> {
 
+    private final TeamMapper teamMapper = new TeamMapper();
+    private final QuestionMapper questionMapper = new QuestionMapper();
+
     @Override
     public Response mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -18,8 +21,8 @@ public class ResponseMapper implements RowMapper<Response> {
         response.setResponseWager(rs.getInt("response_wager"));
         response.setResponseCorrect(rs.getBoolean("response_correct"));
         response.setResponsePoints(rs.getInt("response_points"));
-        response.setTeam(new TeamMapper().mapRow(rs, rowNum));
-        response.setQuestion(new QuestionMapper().mapRow(rs, rowNum));
+        response.setTeam(teamMapper.mapRow(rs, rowNum));
+        response.setQuestion(questionMapper.mapRow(rs, rowNum));
 
         return response;
     }

@@ -1,0 +1,10 @@
+Project summary:
+- Project name
+- 1 sentence summary of how your project solves the problem you set out to solve, ie what your project does at a high level
+- 1 sentence technical summary: list your in-curriculum tech, list your out-of-curriculum tech, and list any technical accomplishments ie the hardest part of your project
+
+
+TRIVIA NIGHT EXTRAVAGANZA
+
+TNE provides a platform for groups of friends and family to create and play themed trivia from their favorite shows, movies, book, anything!!!
+Using the fundamental skills learned through MySQl, Springboot Java, and React, Next,js for vercel deployment and Spring's implementation of server side events bring CRUD actions to a live, real-time interactive application.

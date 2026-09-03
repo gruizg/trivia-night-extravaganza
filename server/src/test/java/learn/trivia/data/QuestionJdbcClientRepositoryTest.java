@@ -38,12 +38,12 @@ class QuestionJdbcClientRepositoryTest {
 
             assertNotNull(question);
             assertEquals("category", question.getQuestionCategory());
-            assertEquals("question", question.getQuestionPrompt());
+            assertEquals("prompt", question.getQuestionPrompt());
             assertEquals("answer", question.getQuestionAnswer());
             assertEquals(QuestionType.NORMAL, question.getQuestionType());
             assertEquals(1, question.getQuestionRound());
             assertEquals(1, question.getQuestionOrder());
-            assertEquals(makeTheme(), question.getTheme());
+            assertEquals(makeExistingTheme(), question.getTheme());
         }
 
         @Test
