@@ -10,7 +10,6 @@ public class KnownGoodState {
     @Autowired
     JdbcClient client;
 
-    static boolean hasRun = false;
 
     void set() {
         client.sql("call set_known_good_state();").update();
