@@ -32,7 +32,6 @@ class TeamJdbcClientRepositoryTest {
         void shouldFindById() {
             Team team = repository.findById(1);
 
-            Game game = makeExistingGame();
             assertNotNull(team);
             assertEquals("token", team.getTeamToken());
             assertEquals(1, team.getTeamNumber());

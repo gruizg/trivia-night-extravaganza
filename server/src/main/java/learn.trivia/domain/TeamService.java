@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static learn.trivia.domain.CodeGenerator.generateGameCode;
 import static learn.trivia.domain.CodeGenerator.generateToken;
 
 @Service
@@ -91,7 +90,7 @@ public class TeamService {
     }
 
     private String generateUniqueTeamToken() {
-        String token = "";
+        String token;
         for (int i = 0; i < 10; i++) {
             token = generateToken();
             if (!(teamRepository.teamTokenExists(token) || token.isBlank())) {

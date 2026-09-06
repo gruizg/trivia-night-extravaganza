@@ -84,7 +84,7 @@ public class ResponseJdbcClientRepository implements ResponseRepository {
         final String sql = """
                 insert into response(response_answer, response_wager, response_correct, response_points, team_id, question_id)
                     values (:response_answer, :response_wager, :response_correct, :response_points, :team_id, :question_id);
-                 """;
+                """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = client.sql(sql)
