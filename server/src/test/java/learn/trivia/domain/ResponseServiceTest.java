@@ -1,5 +1,7 @@
 package learn.trivia.domain;
 
+import learn.trivia.data.doubles.GameRepositoryDouble;
+import learn.trivia.data.doubles.QuestionRepositoryDouble;
 import learn.trivia.data.doubles.ResponseRepositoryDouble;
 import learn.trivia.data.doubles.TeamRepositoryDouble;
 import learn.trivia.models.*;
@@ -16,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseServiceTest {
 
-    ResponseService service = new ResponseService(new ResponseRepositoryDouble(), new TeamRepositoryDouble());
+    ResponseService service = new ResponseService(new ResponseRepositoryDouble(), new TeamRepositoryDouble(), new QuestionRepositoryDouble(), new GameRepositoryDouble());
 
     @Nested
     class Read {

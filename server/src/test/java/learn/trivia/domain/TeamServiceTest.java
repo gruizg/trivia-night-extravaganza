@@ -1,5 +1,6 @@
 package learn.trivia.domain;
 
+import learn.trivia.data.doubles.GameRepositoryDouble;
 import learn.trivia.data.doubles.TeamRepositoryDouble;
 import learn.trivia.models.*;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TeamServiceTest {
 
-    TeamService service = new TeamService(new TeamRepositoryDouble());
+    TeamService service = new TeamService(new TeamRepositoryDouble(), new GameRepositoryDouble());
 
     //TODO: IMPLEMENT TESTS
 
@@ -68,6 +69,7 @@ class TeamServiceTest {
             assertNotNull(actual.getTeamToken());
             assertFalse(actual.getTeamToken().isBlank());
             assertEquals(toCreate.getTeamName(), actual.getTeamName());
+            assertEquals(3, actual.getTeamNumber());
         }
 
         @Test
