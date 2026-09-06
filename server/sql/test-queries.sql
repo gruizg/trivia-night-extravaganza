@@ -33,7 +33,7 @@ where t.theme_id = 1;
 
 
 select t.team_id, t.team_token, t.team_number, t.team_name,
-       g.game_id, g.game_code, g.host_token, g.game_status, g.current_question_id,
+       g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
        q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
        th.theme_id, th.theme_title, th.theme_description,
        u.user_id, u.username, u.email, u.password
@@ -44,6 +44,19 @@ left join theme th on g.theme_id = th.theme_id
 left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
 left join user u on th.user_id = u.user_id
 where t.team_id = ?;
+
+select t.team_id, t.team_token, t.team_number, t.team_name,
+       g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+       th.theme_id, th.theme_title, th.theme_description,
+       u.user_id, u.username, u.email, u.password
+
+from team t
+         left join game g on t.game_id = g.game_id
+         left join theme th on g.theme_id = th.theme_id
+         left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
+         left join user u on th.user_id = u.user_id
+where g.game_id = ?;
 
 
 
@@ -76,3 +89,88 @@ update game set
                 current_round = ?,
                 current_question_id = ?
 where game_id = ?;
+
+select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+       t.team_id, t.team_token, t.team_number, t.team_name,
+       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+       g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+       th.theme_id, th.theme_title, th.theme_description,
+       u.user_id, u.username, u.email, u.password
+
+from response r
+    left join team t on r.team_id = t.team_id
+    left join question q on r.question_id = q.question_id
+    left join game g on t.game_id = g.game_id
+    left join theme th on g.theme_id = th.theme_id
+    left join user u on th.user_id = u.user_id
+where r.response_id = ?;
+
+
+select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+       t.team_id, t.team_token, t.team_number, t.team_name,
+       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+       g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+       th.theme_id, th.theme_title, th.theme_description,
+       u.user_id, u.username, u.email, u.password
+
+from response r
+         left join team t on r.team_id = t.team_id
+         left join question q on r.question_id = q.question_id
+         left join game g on t.game_id = g.game_id
+         left join theme th on g.theme_id = th.theme_id
+         left join user u on th.user_id = u.user_id
+where g.game_id = ? and q.question_id = ?;
+
+
+select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+       t.team_id, t.team_token, t.team_number, t.team_name,
+       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+       g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+       th.theme_id, th.theme_title, th.theme_description,
+       u.user_id, u.username, u.email, u.password
+
+from response r
+         left join team t on r.team_id = t.team_id
+         left join question q on r.question_id = q.question_id
+         left join game g on t.game_id = g.game_id
+         left join theme th on g.theme_id = th.theme_id
+         left join user u on th.user_id = u.user_id
+where t.team_id = ?;
+
+
+select r.response_wager from response r
+left join team t on r.team_id = t.team_id
+left join question q on r.question_id = q.question_id
+left join game g on t.game_id = g.game_id
+where t.team_id = ? and q.question_round = ?;
+
+update response
+set response_correct = ?,
+    response_points = ?
+where response_id = ?;
+
+
+select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+       t.team_id, t.team_token, t.team_number, t.team_name,
+       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+       g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+       th.theme_id, th.theme_title, th.theme_description,
+       u.user_id, u.username, u.email, u.password
+
+from response r
+         left join team t on r.team_id = t.team_id
+         left join question q on r.question_id = q.question_id
+         left join game g on t.game_id = g.game_id
+         left join theme th on g.theme_id = th.theme_id
+         left join user u on th.user_id = u.user_id
+where r.response_id = ?;
+
+select coalesce(sum(response.response_points), 0)
+from response
+where team_id = ?;
+
+select * from response;
+
+select exists(select 1 from team where team_name = ? and game_id = ?);
+
+select exists(select 1 from team where team_token = ?);

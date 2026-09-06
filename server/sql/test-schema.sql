@@ -123,7 +123,9 @@ begin
     INSERT INTO question (question_category, question_prompt, question_answer, question_type, question_round, question_order, theme_id)
     VALUES ('category', 'prompt', 'answer', 'normal', 1, 1, 1),
            ('Category 2', 'Question 2', 'Answer 2', 'normal', 1, 2, 1),
-           ('Category 1', 'Question 3', 'Answer 3', 'halftime', 1, 1, 2);
+           ('Category 1', 'Question 3', 'Answer 3', 'halftime', 1, 1, 2),
+           ('category 1', 'Question 4', 'Answer 4', 'normal', 2, 1, 1);
+
 
     INSERT INTO game(game_code, host_token, game_status, current_round, current_question_id, theme_id)
     values ('code', 'token', 'lobby', 1, 1, 1);
@@ -132,6 +134,11 @@ begin
     VALUES ('token', 1, 'name', 1),
            ('token 2', 2, 'name 2', 1);
 
+    insert into response(response_answer, response_wager, response_correct, response_points, team_id, question_id)
+    values ('answer', 1, false, 0, 1, 1),
+           ('answer 2', 3, true, 3, 2,1),
+           ('answer', 3, false, 0, 1, 2),
+           ('answer', 5, true, 5, 1, 4);
 
 end //
 delimiter ;
