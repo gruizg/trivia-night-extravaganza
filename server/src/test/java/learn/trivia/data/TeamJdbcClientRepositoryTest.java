@@ -1,6 +1,5 @@
 package learn.trivia.data;
 
-import learn.trivia.models.Game;
 import learn.trivia.models.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

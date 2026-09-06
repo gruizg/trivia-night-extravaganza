@@ -1,6 +1,5 @@
 package learn.trivia.controllers;
 
-import learn.trivia.domain.GameService;
 import learn.trivia.domain.ResponseService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
