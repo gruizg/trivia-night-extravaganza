@@ -15,9 +15,9 @@ public class QuestionRepositoryDouble implements QuestionRepository {
     ArrayList<Question> questions = new ArrayList<>();
 
     public QuestionRepositoryDouble() {
-        questions.add(makeQuestion());
-        questions.add(new Question(2, "category 2", "question 2", "answer 2", QuestionType.NORMAL, 1, 2, makeTheme()));
-        Theme theme = new Theme(2, "theme 2", "description 2", makeUser());
+        questions.add(makeExistingQuestion());
+        questions.add(new Question(2, "category 2", "question 2", "answer 2", QuestionType.NORMAL, 1, 2, makeExistingTheme()));
+        Theme theme = new Theme(2, "theme 2", "description 2", makeExistingUser());
         questions.add(new Question(3, "category 3", "question 3", "answer 3", QuestionType.HALFTIME, 1, 1, theme));
 
     }

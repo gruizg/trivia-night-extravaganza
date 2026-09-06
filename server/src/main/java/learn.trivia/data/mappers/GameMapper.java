@@ -9,6 +9,9 @@ import java.sql.SQLException;
 
 public class GameMapper implements RowMapper<Game> {
 
+    private final QuestionMapper questionMapper = new QuestionMapper();
+    private final ThemeMapper themeMapper = new ThemeMapper();
+
     @Override
     public Game mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -17,19 +20,21 @@ public class GameMapper implements RowMapper<Game> {
         game.setGameId(rs.getInt("game_id"));
         game.setGameCode(rs.getString("game_code"));
         game.setHostToken(rs.getString("host_token"));
-        game.setGameStatus(GameStatus.valueOf(rs.getString("game_status")));
-        game.setCurrentRound(rs.getInt("current_round"));
-        int currentQuestionId = rs.getInt("current_question_id");
-        if (!rs.wasNull()) {
-            game.setCurrentQuestion(new QuestionMapper().mapRow(rs, rowNum));
+        game.setGameStatus(GameStatus.findByName(rs.getString("game_status")));
+        int currentRound = rs.getInt("current_round");
+        if (rs.wasNull()) {
+            game.setCurrentRound(0);
+        } else {
+            game.setCurrentRound(currentRound);
+        }
+        if (rs.getObject("current_question_id") != null) {
+            game.setCurrentQuestion(questionMapper.mapRow(rs, rowNum));
         } else {
             game.setCurrentQuestion(null);
         }
-        game.setTheme(new ThemeMapper().mapRow(rs, rowNum));
+        game.setTheme(themeMapper.mapRow(rs, rowNum));
 
         return game;
     }
-
-    //TODO: IMPLEMENT
 
 }

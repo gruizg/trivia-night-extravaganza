@@ -10,19 +10,19 @@ class TeamTest {
 
     @Test
     void shouldCorrectlyInitializeFields() {
-        Team team = makeTeam();
+        Team team = makeExistingTeam();
 
         assertEquals(1, team.getTeamId());
         assertEquals("token", team.getTeamToken());
         assertEquals(1, team.getTeamNumber());
         assertEquals("name", team.getTeamName());
-        assertEquals(makeGame(), team.getGame());
+        assertEquals(makeExistingGame(), team.getGame());
     }
 
     @Test
     void shouldBeSameTeam() {
-        Team team1 = makeTeam();
-        Team team2 = new Team(1, "token", 1, "name", makeGame());
+        Team team1 = makeExistingTeam();
+        Team team2 = new Team(1, "token", 1, "name", makeExistingGame());
 
         assertEquals(team1, team2);
     }
@@ -31,8 +31,8 @@ class TeamTest {
     class DifferentTeams {
         @Test
         void notEqualWhenIdIsDifferent() {
-            Team team1 = makeTeam();
-            Team team2 = makeTeam();
+            Team team1 = makeExistingTeam();
+            Team team2 = makeExistingTeam();
             team2.setTeamId(2);
 
             assertNotEquals(team1, team2);
@@ -40,8 +40,8 @@ class TeamTest {
 
         @Test
         void notEqualWhenTokenIsDifferent() {
-            Team team1 = makeTeam();
-            Team team2 = makeTeam();
+            Team team1 = makeExistingTeam();
+            Team team2 = makeExistingTeam();
             team2.setTeamToken("token2");
 
             assertNotEquals(team1, team2);
@@ -49,8 +49,8 @@ class TeamTest {
 
         @Test
         void notEqualWhenNumberIsDifferent() {
-            Team team1 = makeTeam();
-            Team team2 = makeTeam();
+            Team team1 = makeExistingTeam();
+            Team team2 = makeExistingTeam();
             team2.setTeamNumber(2);
 
             assertNotEquals(team1, team2);
@@ -58,8 +58,8 @@ class TeamTest {
 
         @Test
         void notEqualWhenNameIsDifferent() {
-            Team team1 = makeTeam();
-            Team team2 = makeTeam();
+            Team team1 = makeExistingTeam();
+            Team team2 = makeExistingTeam();
             team2.setTeamName("name2");
 
             assertNotEquals(team1, team2);
@@ -67,9 +67,9 @@ class TeamTest {
 
         @Test
         void notEqualWhenGameIsDifferent() {
-            Team team1 = makeTeam();
-            Team team2 = makeTeam();
-            Game game = makeGame();
+            Team team1 = makeExistingTeam();
+            Team team2 = makeExistingTeam();
+            Game game = makeExistingGame();
             game.setGameId(2);
             team2.setGame(game);
 
