@@ -99,7 +99,7 @@ public class ResponseJdbcClientRepository implements ResponseRepository {
         if (rowsAffected == 0) return null;
 
         response.setResponseId(keyHolder.getKey().intValue());
-        return response;
+        return findById(response.getResponseId());
     }
 
     @Override

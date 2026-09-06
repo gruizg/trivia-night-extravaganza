@@ -1,1 +1,35 @@
-#TODO: IMPLEMENT
+@url = http://localhost:8080/api/game
+
+GET {{url}}/1 HTTP/1.1
+
+###
+
+GET {{url}}/code/code HTTP/1.1
+
+###
+
+POST {{url}}
+Content-Type: application/json
+
+{
+  "theme": {
+    "themeId": 1
+  }
+}
+
+###
+
+PUT {{url}}/1
+Content-Type: application/json
+
+{
+  "gameId": 1,
+  "gameStatus": "QUESTION",
+  "currentRound": 1,
+  "currentQuestion": {
+    "questionId": 1
+  },
+  "theme": {
+    "themeId": 1
+  }
+}

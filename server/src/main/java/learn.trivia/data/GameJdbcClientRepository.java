@@ -77,7 +77,7 @@ public class GameJdbcClientRepository implements GameRepository {
         if (rowsAffected == 0) return null;
 
         game.setGameId(keyHolder.getKey().intValue());
-        return game;
+        return findById(game.getGameId());
     }
 
     @Override

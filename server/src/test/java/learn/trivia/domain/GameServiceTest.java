@@ -1,6 +1,7 @@
 package learn.trivia.domain;
 
 import learn.trivia.data.doubles.GameRepositoryDouble;
+import learn.trivia.data.doubles.ThemeRepositoryDouble;
 import learn.trivia.models.Game;
 import learn.trivia.models.GameStatus;
 import learn.trivia.models.Theme;
@@ -17,7 +18,7 @@ class GameServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new GameService(new GameRepositoryDouble());
+        service = new GameService(new GameRepositoryDouble(), new ThemeRepositoryDouble());
     }
 
     @Nested

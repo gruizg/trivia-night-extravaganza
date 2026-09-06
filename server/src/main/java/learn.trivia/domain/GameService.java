@@ -1,8 +1,10 @@
 package learn.trivia.domain;
 
 import learn.trivia.data.GameRepository;
+import learn.trivia.data.ThemeRepository;
 import learn.trivia.models.Game;
 import learn.trivia.models.GameStatus;
+import learn.trivia.models.Theme;
 import org.springframework.stereotype.Service;
 
 import static learn.trivia.domain.CodeGenerator.*;
@@ -11,9 +13,11 @@ import static learn.trivia.domain.CodeGenerator.*;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final ThemeRepository themeRepository;
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(GameRepository gameRepository, ThemeRepository themeRepository) {
         this.gameRepository = gameRepository;
+        this.themeRepository = themeRepository;
     }
 
     public Game findById(int gameId) {
@@ -99,17 +103,18 @@ public class GameService {
             return result;
         }
 
-        if (game.getGameCode() == null || game.getGameCode().isBlank()) {
-            result.addMessage("Game code is required for `update` operation", ResultType.INVALID);
-        }
-
-        if (game.getHostToken() == null || game.getHostToken().isBlank()) {
-            result.addMessage("Host token is required for `update` operation", ResultType.INVALID);
-        }
+//        if (game.getGameCode() == null || game.getGameCode().isBlank()) {
+//            result.addMessage("Game code is required for `update` operation", ResultType.INVALID);
+//        }
+//
+//        if (game.getHostToken() == null || game.getHostToken().isBlank()) {
+//            result.addMessage("Host token is required for `update` operation", ResultType.INVALID);
+//        }
 
         if (game.getGameStatus() == null) {
             result.addMessage("Game status is required for `update` operation", ResultType.INVALID);
         }
+
 
         if (game.getTheme() == null) {
             result.addMessage("Theme is required for `update` operation", ResultType.INVALID);
@@ -119,13 +124,13 @@ public class GameService {
             return result;
         }
 
-        if (!game.getGameCode().equals(existing.getGameCode())) {
-            result.addMessage("Game code cannot be updated", ResultType.INVALID);
-        }
-
-        if (!game.getHostToken().equals(existing.getHostToken())) {
-            result.addMessage("Host token cannot be updated", ResultType.INVALID);
-        }
+//        if (!game.getGameCode().equals(existing.getGameCode())) {
+//            result.addMessage("Game code cannot be updated", ResultType.INVALID);
+//        }
+//
+//        if (!game.getHostToken().equals(existing.getHostToken())) {
+//            result.addMessage("Host token cannot be updated", ResultType.INVALID);
+//        }
 
         if (game.getGameStatus() == GameStatus.LOBBY) {
             result.addMessage("Game status cannot be reset to lobby", ResultType.INVALID);
@@ -139,7 +144,9 @@ public class GameService {
             result.addMessage("Theme is invalid", ResultType.INVALID);
         }
 
-        if (!(game.getTheme().equals(existing.getTheme()))) {
+        Theme theme = themeRepository.findById(game.getTheme().getThemeId());
+
+        if (!theme.equals(existing.getTheme())) {
             result.addMessage("Theme cannot be updated", ResultType.INVALID);
         }
 
@@ -147,6 +154,9 @@ public class GameService {
             return result;
         }
 
+        game.setGameCode(existing.getGameCode());
+        game.setHostToken(existing.getHostToken());
+        game.setTheme(existing.getTheme());
         if (gameRepository.update(game)) {
             result.setPayload(game);
             return result;

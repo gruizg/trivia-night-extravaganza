@@ -174,3 +174,12 @@ select * from response;
 select exists(select 1 from team where team_name = ? and game_id = ?);
 
 select exists(select 1 from team where team_token = ?);
+
+select coalesce(max(team_number), 0) + 1 as next_number
+from team
+where game_id = :game_id
+
+(select next_number
+ from (select coalesce(max(team_number), 0) + 1 as next_number
+       from team
+       where game_id = :game_id) as t)
