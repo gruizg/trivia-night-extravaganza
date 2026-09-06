@@ -1,6 +1,7 @@
 package learn.trivia.controllers;
 
 import learn.trivia.domain.ResponseService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,5 +15,6 @@ public class ResponseController {
         this.service = service;
     }
 
+    @GetMapping
     //TODO: IMPLEMENT
 }
