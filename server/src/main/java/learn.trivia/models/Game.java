@@ -84,7 +84,7 @@ public class Game {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return gameId == game.gameId && currentRound == game.currentRound && Objects.equals(gameCode, game.gameCode) && Objects.equals(hostToken, game.hostToken) && Objects.equals(gameStatus, game.gameStatus) && Objects.equals(currentQuestion, game.currentQuestion) && Objects.equals(theme, game.theme);
+        return gameId == game.gameId && currentRound == game.currentRound && Objects.equals(gameCode, game.gameCode) && Objects.equals(hostToken, game.hostToken) && gameStatus == game.gameStatus && Objects.equals(currentQuestion, game.currentQuestion) && Objects.equals(theme, game.theme);
     }
 
     @Override

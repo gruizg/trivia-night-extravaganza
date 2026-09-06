@@ -9,6 +9,8 @@ import java.sql.SQLException;
 
 public class QuestionMapper implements RowMapper<Question> {
 
+    private final ThemeMapper themeMapper = new ThemeMapper();
+
     @Override
     public Question mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -21,7 +23,7 @@ public class QuestionMapper implements RowMapper<Question> {
         question.setQuestionType(QuestionType.findByName(rs.getString("question_type")));
         question.setQuestionRound(rs.getInt("question_round"));
         question.setQuestionOrder(rs.getInt("question_order"));
-        question.setTheme(new ThemeMapper().mapRow(rs, rowNum));
+        question.setTheme(themeMapper.mapRow(rs, rowNum));
 
         return question;
     }

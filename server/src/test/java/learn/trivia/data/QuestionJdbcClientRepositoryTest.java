@@ -27,8 +27,6 @@ class QuestionJdbcClientRepositoryTest {
         knownGoodState.set();
     }
 
-    //TODO: IMPLEMENT TESTS
-
     @Nested
     class Read {
 
@@ -38,12 +36,12 @@ class QuestionJdbcClientRepositoryTest {
 
             assertNotNull(question);
             assertEquals("category", question.getQuestionCategory());
-            assertEquals("question", question.getQuestionPrompt());
+            assertEquals("prompt", question.getQuestionPrompt());
             assertEquals("answer", question.getQuestionAnswer());
             assertEquals(QuestionType.NORMAL, question.getQuestionType());
             assertEquals(1, question.getQuestionRound());
             assertEquals(1, question.getQuestionOrder());
-            assertEquals(makeTheme(), question.getTheme());
+            assertEquals(makeExistingTheme(), question.getTheme());
         }
 
         @Test
@@ -51,7 +49,7 @@ class QuestionJdbcClientRepositoryTest {
             List<Question> questions = repository.findByThemeId(1);
 
             assertNotNull(questions);
-            assertEquals(2, questions.size());
+            assertEquals(3, questions.size());
         }
     }
 }
