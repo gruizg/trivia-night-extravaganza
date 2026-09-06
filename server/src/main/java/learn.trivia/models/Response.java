@@ -55,6 +55,7 @@ public class Response {
 
     public void setResponseCorrect(boolean responseCorrect) {
         this.responseCorrect = responseCorrect;
+        if (responseCorrect) this.responsePoints = this.responseWager;
     }
 
     public int getResponsePoints() {
