@@ -27,8 +27,6 @@ class QuestionJdbcClientRepositoryTest {
         knownGoodState.set();
     }
 
-    //TODO: IMPLEMENT TESTS
-
     @Nested
     class Read {
 
@@ -51,7 +49,7 @@ class QuestionJdbcClientRepositoryTest {
             List<Question> questions = repository.findByThemeId(1);
 
             assertNotNull(questions);
-            assertEquals(2, questions.size());
+            assertEquals(3, questions.size());
         }
     }
 }

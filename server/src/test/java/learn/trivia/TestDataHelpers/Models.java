@@ -43,6 +43,10 @@ public class Models {
         return new Game(1, "code", "token", GameStatus.LOBBY, 1, makeExistingQuestion(), makeExistingTheme());
     }
 
+    public static Game makeExistingGameInProgress() {
+        return new Game(1, "code", "token", GameStatus.QUESTION, 1, makeExistingQuestion(), makeExistingTheme());
+    }
+
     public static Team makeNewTeam() {
         Team team = new Team();
         team.setTeamName("new name");

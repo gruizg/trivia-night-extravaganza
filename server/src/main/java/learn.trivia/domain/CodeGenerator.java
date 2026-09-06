@@ -19,4 +19,5 @@ public class CodeGenerator {
     public static String generateToken() {
         return UUID.randomUUID().toString();
     }
+
 }

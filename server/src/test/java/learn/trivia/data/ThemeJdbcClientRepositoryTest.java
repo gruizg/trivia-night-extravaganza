@@ -26,7 +26,6 @@ class ThemeJdbcClientRepositoryTest {
         knownGoodState.set();
     }
 
-    //TODO: IMPLEMENT TESTS
     @Nested
     class Read {
 
