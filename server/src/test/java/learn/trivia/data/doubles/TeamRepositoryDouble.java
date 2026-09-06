@@ -30,7 +30,9 @@ public class TeamRepositoryDouble implements TeamRepository {
 
     @Override
     public Team add(Team team) {
-        team.setTeamId(3);
+        team.setTeamId(teams.size());
+        team.setTeamNumber(teams.size());
+        teams.add(team);
         return team;
     }
 

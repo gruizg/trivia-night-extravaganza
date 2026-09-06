@@ -64,7 +64,6 @@ class TeamJdbcClientRepositoryTest {
         void shouldAdd() {
             Team toAdd = makeExistingTeam();
             toAdd.setTeamId(0);
-            toAdd.setTeamNumber(3);
 
             Team expected = makeExistingTeam();
             expected.setTeamId(3);
