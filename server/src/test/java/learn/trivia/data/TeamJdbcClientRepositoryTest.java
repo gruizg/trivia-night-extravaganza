@@ -41,11 +41,21 @@ class TeamJdbcClientRepositoryTest {
         }
 
         @Test
-        void shouldFindAll() {
-            List<Team> teams = repository.findAll();
+        void shouldFindByGame() {
+            List<Team> teams = repository.findByGame(1);
 
             assertNotNull(teams);
             assertEquals(2, teams.size());
+        }
+
+        @Test
+        void shouldFindTeamName() {
+            assertTrue(repository.teamNameExists(1, "name"));
+        }
+
+        @Test
+        void shouldNotFindTeamName() {
+            assertFalse(repository.teamNameExists(1, "bad name"));
         }
     }
 

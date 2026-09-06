@@ -43,7 +43,7 @@ public class TeamJdbcClientRepository implements TeamRepository {
     }
 
     @Override
-    public List<Team> findAll() {
+    public List<Team> findByGame(int gameId) {
 
         final String sql = """
                 select t.team_id, t.team_token, t.team_number, t.team_name,
@@ -53,13 +53,15 @@ public class TeamJdbcClientRepository implements TeamRepository {
                        u.user_id, u.username, u.email, u.password
                 
                 from team t
-                left join game g on t.game_id = g.game_id
-                left join theme th on g.theme_id = th.theme_id
-                left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
-                left join user u on th.user_id = u.user_id
+                         left join game g on t.game_id = g.game_id
+                         left join theme th on g.theme_id = th.theme_id
+                         left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
+                         left join user u on th.user_id = u.user_id
+                where g.game_id = ?;
                 """;
 
         return client.sql(sql)
+                .param(gameId)
                 .query(new TeamMapper())
                 .list();
     }
@@ -84,6 +86,29 @@ public class TeamJdbcClientRepository implements TeamRepository {
 
         team.setTeamId(keyHolder.getKey().intValue());
         return team;
+    }
+
+    @Override
+    public boolean teamNameExists(int gameId, String name) {
+        final String sql = "select exists(select 1 from team where game_id = ? and team.team_name = ?);";
+
+        return client.sql(sql)
+                .param(gameId)
+                .param(name)
+                .query(Boolean.class)
+                .single();
+    }
+
+    @Override
+    public boolean teamTokenExists(String token) {
+
+        final String sql = "select exists(select 1 from team where team_token = ?);";
+
+
+        return client.sql(sql)
+                .param(token)
+                .query(Boolean.class)
+                .single();
     }
 
 }
