@@ -101,4 +101,26 @@ class ResponseTest {
 
     }
 
+    @Nested
+    class AwardingPoints {
+
+        @Test
+        void shouldAwardPointsForCorrectAnswer() {
+            Response response = makeNewResponse();
+            response.setResponseCorrect(true);
+
+            assertTrue(response.isResponseCorrect());
+            assertEquals(response.getResponseWager(), response.getResponsePoints());
+        }
+
+        @Test
+        void shouldNotAwardPointsForWrongAnswer() {
+            Response response = makeNewResponse();
+            response.setResponseCorrect(false);
+
+            assertFalse(response.isResponseCorrect());
+            assertEquals(0, response.getResponsePoints());
+        }
+    }
+
 }
