@@ -71,13 +71,18 @@ public class TeamJdbcClientRepository implements TeamRepository {
 
         final String sql = """
                 insert into team(team_token, team_number, team_name, game_id)
-                values (:team_token, :team_number, :team_name, :game_id);
+                values (:team_token, 
+                        (select next_number
+                                 from (select coalesce(max(team_number), 0) + 1 as next_number
+                                       from team
+                                       where game_id = :game_id) as t), 
+                        :team_name, :game_id);
                 """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
+
         int rowsAffected = client.sql(sql)
                 .param("team_token", team.getTeamToken())
-                .param("team_number", team.getTeamNumber())
                 .param("team_name", team.getTeamName())
                 .param("game_id", team.getGame().getGameId())
                 .update(keyHolder, "team_id");
@@ -85,7 +90,7 @@ public class TeamJdbcClientRepository implements TeamRepository {
         if (rowsAffected == 0) return null;
 
         team.setTeamId(keyHolder.getKey().intValue());
-        return team;
+        return findById(team.getTeamId());
     }
 
     @Override
