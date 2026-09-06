@@ -1,5 +1,7 @@
 package learn.trivia.domain;
 
+import learn.trivia.data.GameRepository;
+import learn.trivia.data.QuestionRepository;
 import learn.trivia.data.ResponseRepository;
 import learn.trivia.data.TeamRepository;
 import learn.trivia.models.*;
@@ -12,10 +14,14 @@ public class ResponseService {
 
     private final ResponseRepository responseRepository;
     private final TeamRepository teamRepository;
+    private final QuestionRepository questionRepository;
+    private final GameRepository gameRepository;
 
-    public ResponseService(ResponseRepository responseRepository, TeamRepository teamRepository) {
+    public ResponseService(ResponseRepository responseRepository, TeamRepository teamRepository, QuestionRepository questionRepository, GameRepository gameRepository) {
         this.responseRepository = responseRepository;
         this.teamRepository = teamRepository;
+        this.questionRepository = questionRepository;
+        this.gameRepository = gameRepository;
     }
 
     public Response findById(int responseId) {
@@ -89,7 +95,8 @@ public class ResponseService {
             return result;
         }
 
-        QuestionType questionType = response.getQuestion().getQuestionType();
+        Question question = questionRepository.findById(response.getQuestion().getQuestionId());
+        QuestionType questionType = question.getQuestionType();
 
         if (questionType == QuestionType.FINAL) {
             if (response.getResponseWager() < 0 || response.getResponseWager() > 15) {
@@ -113,7 +120,7 @@ public class ResponseService {
         }
 
 
-        Game existingGame = existingTeam.getGame();
+        Game existingGame = gameRepository.findById(existingTeam.getGame().getGameId());
 
         if (existingGame.getGameStatus() != GameStatus.QUESTION) {
             result.addMessage("Submissions not accepted at this time", ResultType.INVALID);
@@ -139,7 +146,8 @@ public class ResponseService {
             return result;
         }
 
-        if (response.getTeam().getGame() == null) {
+        Team team = teamRepository.findById(response.getTeam().getTeamId());
+        if (team.getGame() == null) {
             result.addMessage("Game is required for `update` operation", ResultType.INVALID);
             return result;
         }
@@ -161,11 +169,13 @@ public class ResponseService {
             return result;
         }
 
-        if (!response.getTeam().equals(existing.getTeam())) {
+
+        if (!team.equals(existing.getTeam())) {
             result.addMessage("Team cannot be updated", ResultType.INVALID);
         }
 
-        if (!response.getQuestion().equals(existing.getQuestion())) {
+        Question question = questionRepository.findById(response.getQuestion().getQuestionId());
+        if (!question.equals(existing.getQuestion())) {
             result.addMessage("Question cannot be updated", ResultType.INVALID);
         }
 
@@ -188,7 +198,6 @@ public class ResponseService {
 
         result.addMessage("Unable to update", ResultType.ERROR);
         return result;
-        //TODO: IMPLEMENT
     }
 
     public List<Integer> findAvailableWagers(int teamId, int currentRound) {

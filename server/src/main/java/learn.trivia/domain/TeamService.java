@@ -1,5 +1,6 @@
 package learn.trivia.domain;
 
+import learn.trivia.data.GameRepository;
 import learn.trivia.data.TeamRepository;
 import learn.trivia.models.Game;
 import learn.trivia.models.GameStatus;
@@ -14,9 +15,11 @@ import static learn.trivia.domain.CodeGenerator.generateToken;
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final GameRepository gameRepository;
 
-    public TeamService(TeamRepository teamRepository) {
+    public TeamService(TeamRepository teamRepository, GameRepository gameRepository) {
         this.teamRepository = teamRepository;
+        this.gameRepository = gameRepository;
     }
 
     public Team findById(int teamId) {
@@ -64,7 +67,7 @@ public class TeamService {
             return result;
         }
 
-        Game game = team.getGame();
+        Game game = gameRepository.findById(team.getGame().getGameId());
 
         if (game.getGameStatus() != GameStatus.LOBBY) {
             result.addMessage("Teams cannot be added once the game has left the lobby", ResultType.INVALID);
