@@ -44,7 +44,7 @@ public class Models {
     }
 
     public static Game makeExistingGameInProgress() {
-        return new Game(1, "code", "token", GameStatus.QUESTION, 1, makeExistingQuestion(), makeExistingTheme());
+        return new Game(2, "code", "token", GameStatus.QUESTION, 1, makeExistingQuestion(), makeExistingTheme());
     }
 
     public static Team makeNewTeam() {
@@ -56,6 +56,10 @@ public class Models {
 
     public static Team makeExistingTeam() {
         return new Team(1, "token", 1, "name", makeExistingGame());
+    }
+
+    public static Team makeExistingTeamInProgress() {
+        return new Team(3, "token 3", 3, "name 3", makeExistingGameInProgress());
     }
 
     public static Response makeNewResponse() {

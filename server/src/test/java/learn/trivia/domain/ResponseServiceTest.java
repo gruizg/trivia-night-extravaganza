@@ -84,8 +84,7 @@ class ResponseServiceTest {
         void shouldAdd() {
             Response toCreate = makeNewResponse();
             toCreate.setResponseWager(5);
-            toCreate.getTeam().setGame(makeExistingGameInProgress());
-
+            toCreate.setTeam(makeExistingTeamInProgress());
             Result<Response> result = service.add(toCreate);
 
             assertTrue(result.isSuccess());
@@ -175,7 +174,7 @@ class ResponseServiceTest {
             question.setQuestionType(QuestionType.FINAL);
             toCreate.setQuestion(question);
             toCreate.setResponseWager(15);
-            toCreate.getTeam().setGame(makeExistingGameInProgress());
+            toCreate.setTeam(makeExistingTeamInProgress());
 
             Result<Response> result = service.add(toCreate);
 

@@ -15,11 +15,12 @@ public class TeamRepositoryDouble implements TeamRepository {
     public TeamRepositoryDouble() {
         teams.add(makeExistingTeam());
         teams.add(new Team(2, "token 2", 2, "name 2", makeExistingGame()));
+        teams.add(makeExistingTeamInProgress());
     }
 
     @Override
     public Team findById(int teamId) {
-        return teams.stream().findFirst().filter(team -> team.getTeamId() == teamId).orElse(null);
+        return teams.stream().filter(team -> team.getTeamId() == teamId).findFirst().orElse(null);
     }
 
     @Override
