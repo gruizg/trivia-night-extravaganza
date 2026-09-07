@@ -4,6 +4,7 @@ public enum GameStatus {
     LOBBY("lobby"),
     QUESTION("question"),
     REVIEW("review"),
+    REVEAL("reveal"),
     RANKING("ranking");
 
     private final String name;
