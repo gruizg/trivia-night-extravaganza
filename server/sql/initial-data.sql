@@ -35,13 +35,7 @@ VALUES ('Science', 'What planet is known as the Red Planet?', 'Mars', 'normal', 
 
        ('Mixed Knowledge', 'Which chemical element has the symbol "Au" on the periodic table?', 'Gold', 'final', 7, 1, 1);
 
-INSERT INTO game(game_code, host_token, game_status, current_round, current_question_id, theme_id)
-values ('code', 'token', 'lobby', 0, null, 1),
-       ('code 2', 'token 2', 'question', 1, 1, 1);
+select * from theme
 
-insert into team(team_token, team_number, team_name, game_id)
-values ('token', 1, 'name', 1),
-       ('token 2', 1, 'name', 2);
-
-insert into response (response_answer, response_wager, response_correct, response_points, team_id, question_id)
-values ('answer', 1, true, 1, 2, 1);
+select *
+from response;
