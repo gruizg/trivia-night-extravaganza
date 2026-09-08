@@ -95,5 +95,3 @@ create table response (
                           constraint uq_response_team_question
                               unique (team_id, question_id)
 );
-
-select * from response;

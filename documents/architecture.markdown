@@ -41,7 +41,6 @@
 - `ThemeService`
 - `GameService`
 - `TeamService`
-- `Response`
 - `ResultType`
 
 ## Controllers

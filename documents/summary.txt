@@ -1,0 +1,6 @@
+
+TRIVIA NIGHT EXTRAVAGANZA
+
+- TNE provides a platform for groups of friends and family to create and play themed trivia from their favorite shows, movies, book, anything!
+
+- Using fundamental skills in MySQL, Spring Boot, and React, TNE is a live CRUD application enhanced with Spring Server-Sent Events for real-time interactions and deployed using Next.js on Vercel.
