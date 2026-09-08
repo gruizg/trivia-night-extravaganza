@@ -5,6 +5,7 @@ import learn.trivia.data.ThemeRepository;
 import learn.trivia.models.Game;
 import learn.trivia.models.GameStatus;
 import learn.trivia.models.Theme;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.springframework.stereotype.Service;
 
 import static learn.trivia.domain.CodeGenerator.*;
@@ -14,10 +15,12 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final ThemeRepository themeRepository;
+    private final GameEventBroadcaster broadcaster;
 
-    public GameService(GameRepository gameRepository, ThemeRepository themeRepository) {
+    public GameService(GameRepository gameRepository, ThemeRepository themeRepository, GameEventBroadcaster broadcaster) {
         this.gameRepository = gameRepository;
         this.themeRepository = themeRepository;
+        this.broadcaster = broadcaster;
     }
 
     public Game findById(int gameId) {
@@ -159,6 +162,7 @@ public class GameService {
         game.setTheme(existing.getTheme());
         if (gameRepository.update(game)) {
             result.setPayload(game);
+            broadcaster.broadcast(game.getGameId(), "game", game);
             return result;
         }
 
