@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TeamRow from "@/app/lobby/_components/TeamRow";
+import useGameEvents from "@/app/hooks/useGameEvents";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const POLL_MS = 3000;
 
 export default function LobbyGame() {
     const router = useRouter();
@@ -53,9 +53,12 @@ export default function LobbyGame() {
 
     useEffect(() => {
         loadTeams();
-        const interval = setInterval(loadTeams, POLL_MS);
-        return () => clearInterval(interval);
     }, [loadTeams]);
+
+    // Pushed by the server as soon as a team joins, instead of polling.
+    useGameEvents(gameId, {
+        team: () => loadTeams(),
+    });
 
     // Starting the game means putting it into the QUESTION state with the
     // theme's first question already loaded — otherwise the game just sits

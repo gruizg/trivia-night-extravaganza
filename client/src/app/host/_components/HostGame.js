@@ -5,9 +5,9 @@ import { useSearchParams } from "next/navigation";
 import ResponseRow from "@/app/host/_components/ResponseRow";
 import AmendRequests from "@/app/host/_components/AmendRequests";
 import TeamRankings from "@/app/host/_components/TeamRankings";
+import useGameEvents from "@/app/hooks/useGameEvents";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const POLL_MS = 3000;
 
 export default function HostGame() {
     const searchParams = useSearchParams();
@@ -106,15 +106,23 @@ export default function HostGame() {
 
     useEffect(() => {
         loadResponses();
-        const interval = setInterval(loadResponses, POLL_MS);
-        return () => clearInterval(interval);
     }, [loadResponses]);
 
     useEffect(() => {
         loadTeams();
-        const interval = setInterval(loadTeams, POLL_MS);
-        return () => clearInterval(interval);
     }, [loadTeams]);
+
+    // Pushed by the server whenever a team submits or the host grades a
+    // response, instead of re-fetching both lists on a timer.
+    useGameEvents(gameId, {
+        response: () => {
+            loadResponses();
+            loadTeams();
+        },
+        team: () => {
+            loadTeams();
+        },
+    });
 
     async function markResponse(response, status) {
         const { responsePoints, ...rest } = response;

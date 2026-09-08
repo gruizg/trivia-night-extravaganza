@@ -5,6 +5,7 @@ import learn.trivia.data.TeamRepository;
 import learn.trivia.models.Game;
 import learn.trivia.models.GameStatus;
 import learn.trivia.models.Team;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +17,12 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final GameRepository gameRepository;
+    private final GameEventBroadcaster broadcaster;
 
-    public TeamService(TeamRepository teamRepository, GameRepository gameRepository) {
+    public TeamService(TeamRepository teamRepository, GameRepository gameRepository, GameEventBroadcaster broadcaster) {
         this.teamRepository = teamRepository;
         this.gameRepository = gameRepository;
+        this.broadcaster = broadcaster;
     }
 
     public Team findById(int teamId) {
@@ -88,6 +91,7 @@ public class TeamService {
         team.setTeamToken(token);
         team = teamRepository.add(team);
         result.setPayload(team);
+        broadcaster.broadcast(team.getGame().getGameId(), "team", team);
 
         return result; //TODO: IMPLEMENT
     }

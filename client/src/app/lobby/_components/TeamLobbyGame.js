@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TeamRow from "@/app/lobby/_components/TeamRow";
 import TeamGameView from "@/app/lobby/_components/TeamGameView";
+import useGameEvents from "@/app/hooks/useGameEvents";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const POLL_MS = 3000;
 
 export default function TeamLobbyGame() {
     const router = useRouter();
@@ -147,15 +147,19 @@ function WaitingRoom({ gameId, teamId }) {
 
     useEffect(() => {
         loadGame();
-        const interval = setInterval(loadGame, POLL_MS);
-        return () => clearInterval(interval);
     }, [loadGame]);
 
     useEffect(() => {
         loadTeams();
-        const interval = setInterval(loadTeams, POLL_MS);
-        return () => clearInterval(interval);
     }, [loadTeams]);
+
+    // Pushed by the server when the host starts the game, advances to the
+    // next question, or another team joins - instead of polling both
+    // endpoints every few seconds.
+    useGameEvents(gameId, {
+        game: () => loadGame(),
+        team: () => loadTeams(),
+    });
 
     if (started && game?.currentQuestion?.questionId) {
         return (

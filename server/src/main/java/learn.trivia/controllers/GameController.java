@@ -3,18 +3,31 @@ package learn.trivia.controllers;
 import learn.trivia.domain.GameService;
 import learn.trivia.domain.Result;
 import learn.trivia.models.Game;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequestMapping("/api/game")
 public class GameController {
 
     private final GameService service;
+    private final GameEventBroadcaster broadcaster;
 
-    public GameController(GameService service) {
+    public GameController(GameService service, GameEventBroadcaster broadcaster) {
         this.service = service;
+        this.broadcaster = broadcaster;
+    }
+
+    // Frontend clients open this once per game and receive "game", "team",
+    // and "response" events pushed from the services below instead of
+    // polling the endpoints on a timer.
+    @GetMapping(value = "/{gameId}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter subscribe(@PathVariable int gameId) {
+        return broadcaster.subscribe(gameId);
     }
 
     @GetMapping("/{gameId}")

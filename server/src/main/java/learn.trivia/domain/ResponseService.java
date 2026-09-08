@@ -5,6 +5,7 @@ import learn.trivia.data.QuestionRepository;
 import learn.trivia.data.ResponseRepository;
 import learn.trivia.data.TeamRepository;
 import learn.trivia.models.*;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +17,14 @@ public class ResponseService {
     private final TeamRepository teamRepository;
     private final QuestionRepository questionRepository;
     private final GameRepository gameRepository;
+    private final GameEventBroadcaster broadcaster;
 
-    public ResponseService(ResponseRepository responseRepository, TeamRepository teamRepository, QuestionRepository questionRepository, GameRepository gameRepository) {
+    public ResponseService(ResponseRepository responseRepository, TeamRepository teamRepository, QuestionRepository questionRepository, GameRepository gameRepository, GameEventBroadcaster broadcaster) {
         this.responseRepository = responseRepository;
         this.teamRepository = teamRepository;
         this.questionRepository = questionRepository;
         this.gameRepository = gameRepository;
+        this.broadcaster = broadcaster;
     }
 
     public Response findById(int responseId) {
@@ -131,6 +134,7 @@ public class ResponseService {
 
         response = responseRepository.add(response);
         result.setPayload(response);
+        broadcaster.broadcast(response.getTeam().getGame().getGameId(), "response", response);
         return result;
 
     }
@@ -195,6 +199,10 @@ public class ResponseService {
 
         if (responseRepository.update(response)) {
             result.setPayload(response);
+            // Re-fetch fully joined so subscribers get complete team/question
+            // data, rather than whatever partial shape the client PUT in.
+            Response updated = responseRepository.findById(response.getResponseId());
+            broadcaster.broadcast(team.getGame().getGameId(), "response", updated);
             return result;
         }
 
