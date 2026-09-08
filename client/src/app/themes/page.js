@@ -1,7 +1,10 @@
 import ThemeCard from "@/app/themes/_components/ThemeCard";
 
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 async function getThemes() {
-    const response = await fetch('http://localhost:8080/api/theme');
+    const response = await fetch(`${API_URL}/theme`);
 
     if (!response.ok) throw new Error("Themes not found");
     return response.json();

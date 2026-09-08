@@ -1,8 +1,13 @@
 package learn.trivia.controllers;
 
+import learn.trivia.domain.Result;
 import learn.trivia.domain.TeamService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import learn.trivia.models.Team;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/team")
@@ -14,6 +19,27 @@ public class TeamController {
         this.service = service;
     }
 
-    //TODO: IMPLEMENT
+    @GetMapping("/{teamId}")
+    public ResponseEntity<Team> findById(@PathVariable int teamId) {
+        Team team = service.findById(teamId);
+        if (team == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(team);
+    }
+
+    @GetMapping("/all/{gameId}")
+    public List<Team> findByGame(@PathVariable int gameId) {
+        return service.findByGame(gameId);
+    }
+
+    @PostMapping
+    public ResponseEntity<Object> add(@RequestBody Team team) {
+        Result<Team> result = service.add(team);
+        if (result.isSuccess()) {
+            return new ResponseEntity<>(result.getPayload(), HttpStatus.CREATED);
+        }
+        return ErrorResponse.build(result);
+    }
 
 }

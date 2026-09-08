@@ -10,18 +10,18 @@ class ThemeTest {
 
     @Test
     void shouldCorrectlyInitializeFields() {
-        Theme theme = makeTheme();
+        Theme theme = makeExistingTheme();
 
         assertEquals(1, theme.getThemeId());
         assertEquals("title", theme.getThemeTitle());
         assertEquals("description", theme.getThemeDescription());
-        assertEquals(makeUser(), theme.getUser());
+        assertEquals(makeExistingUser(), theme.getUser());
     }
 
     @Test
     void shouldBeSameTheme() {
-        Theme theme1 = makeTheme();
-        Theme theme2 = new Theme(1, "title", "description", makeUser());
+        Theme theme1 = makeExistingTheme();
+        Theme theme2 = new Theme(1, "title", "description", makeExistingUser());
 
         assertEquals(theme1, theme2);
     }
@@ -30,8 +30,8 @@ class ThemeTest {
 
         @Test
         void notEqualWhenIdIsDifferent() {
-            Theme theme1 = makeTheme();
-            Theme theme2 = makeTheme();
+            Theme theme1 = makeExistingTheme();
+            Theme theme2 = makeExistingTheme();
             theme2.setThemeId(2);
 
             assertNotEquals(theme1, theme2);
@@ -39,8 +39,8 @@ class ThemeTest {
 
         @Test
         void notEqualWhenTitleIsDifferent() {
-            Theme theme1 = makeTheme();
-            Theme theme2 = makeTheme();
+            Theme theme1 = makeExistingTheme();
+            Theme theme2 = makeExistingTheme();
             theme2.setThemeTitle("title2");
 
             assertNotEquals(theme1, theme2);
@@ -48,8 +48,8 @@ class ThemeTest {
 
         @Test
         void notEqualWhenDescriptionIsDifferent() {
-            Theme theme1 = makeTheme();
-            Theme theme2 = makeTheme();
+            Theme theme1 = makeExistingTheme();
+            Theme theme2 = makeExistingTheme();
             theme2.setThemeDescription("description2");
 
             assertNotEquals(theme1, theme2);
@@ -57,9 +57,9 @@ class ThemeTest {
 
         @Test
         void notEqualWhenUserIsDifferent() {
-            Theme theme1 = makeTheme();
-            Theme theme2 = makeTheme();
-            User user = makeUser();
+            Theme theme1 = makeExistingTheme();
+            Theme theme2 = makeExistingTheme();
+            User user = makeExistingUser();
             user.setUserId(2);
             theme2.setUser(user);
 

@@ -6,20 +6,19 @@ public class Response {
 
     private int responseId;
     private String responseAnswer;
-    private int responseWager;
-    private boolean responseCorrect;
-    private int responsePoints;
+    private int responseWager = 0;
+    private ResponseStatus responseStatus = ResponseStatus.PENDING;
+    private int responsePoints = 0;
     private Team team;
     private Question question;
 
     public Response() {}
 
-    public Response(int responseId, String responseAnswer, int responseWager,
-                    boolean responseCorrect, int responsePoints, Team team, Question question) {
+    public Response(int responseId, String responseAnswer, int responseWager, ResponseStatus responseStatus, int responsePoints, Team team, Question question) {
         this.responseId = responseId;
         this.responseAnswer = responseAnswer;
         this.responseWager = responseWager;
-        this.responseCorrect = responseCorrect;
+        this.responseStatus = responseStatus;
         this.responsePoints = responsePoints;
         this.team = team;
         this.question = question;
@@ -49,12 +48,17 @@ public class Response {
         this.responseWager = responseWager;
     }
 
-    public boolean isResponseCorrect() {
-        return responseCorrect;
+    public ResponseStatus getResponseStatus() {
+        return responseStatus;
     }
 
-    public void setResponseCorrect(boolean responseCorrect) {
-        this.responseCorrect = responseCorrect;
+    public void setResponseStatus(ResponseStatus responseStatus) {
+        this.responseStatus = responseStatus;
+        this.responsePoints = (responseStatus == ResponseStatus.CORRECT) ? this.responseWager : 0;
+    }
+
+    public boolean isGraded() {
+        return responseStatus != ResponseStatus.PENDING;
     }
 
     public int getResponsePoints() {
@@ -85,12 +89,11 @@ public class Response {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Response response = (Response) o;
-        return responseId == response.responseId && responseWager == response.responseWager && responseCorrect == response.responseCorrect && responsePoints == response.responsePoints && Objects.equals(responseAnswer, response.responseAnswer) && Objects.equals(team, response.team) && Objects.equals(question, response.question);
+        return responseId == response.responseId && responseWager == response.responseWager && responsePoints == response.responsePoints && Objects.equals(responseAnswer, response.responseAnswer) && responseStatus == response.responseStatus && Objects.equals(team, response.team) && Objects.equals(question, response.question);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(responseId, responseAnswer, responseWager, responseCorrect, responsePoints, team, question);
+        return Objects.hash(responseId, responseAnswer, responseWager, responseStatus, responsePoints, team, question);
     }
-
 }

@@ -26,7 +26,6 @@ class ThemeJdbcClientRepositoryTest {
         knownGoodState.set();
     }
 
-    //TODO: IMPLEMENT TESTS
     @Nested
     class Read {
 
@@ -37,7 +36,7 @@ class ThemeJdbcClientRepositoryTest {
             assertNotNull(theme);
             assertEquals("title", theme.getThemeTitle());
             assertEquals("description", theme.getThemeDescription());
-            assertEquals(makeUser(), theme.getUser());
+            assertEquals(makeExistingUser(), theme.getUser());
         }
 
         @Test

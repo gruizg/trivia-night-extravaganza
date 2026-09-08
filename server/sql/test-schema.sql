@@ -42,7 +42,7 @@ create table game (
                       game_code text not null,
                       host_token text not null,
                       game_status text,
-                      current_round int,
+                      current_round int null,
                       current_question_id int null,
                       theme_id int null,
                       constraint fk_game_theme
@@ -59,24 +59,27 @@ create table game (
 );
 
 create table team (
-                      team_id int primary key auto_increment,
-                      team_token text not null,
-                      team_number int not null,
-                      team_name text not null,
-                      game_id int null ,
-                      constraint fk_team_game
-                          foreign key (game_id)
-                              references game(game_id)
-                              on delete set null
-                              on update cascade
+    team_id int primary key auto_increment,
+    team_token text not null,
+    team_number int not null,
+    team_name text not null,
+    game_id int null ,
+    constraint fk_team_game
+        foreign key (game_id)
+            references game(game_id)
+            on delete set null
+            on update cascade,
+    constraint uq_game_team_number
+                  unique (game_id, team_number)
+
 );
 
 create table response (
                           response_id int primary key auto_increment,
                           response_answer text,
                           response_wager int,
-                          response_correct boolean,
-                          response_points int,
+                          response_status text,
+                          response_points int default 0,
                           team_id int not null,
                           question_id int not null,
                           constraint fk_response_team
@@ -88,7 +91,9 @@ create table response (
                               foreign key (question_id)
                                   references question(question_id)
                                   on delete cascade
-                                  on update cascade
+                                  on update cascade,
+                          constraint uq_response_team_question
+                              unique (team_id, question_id)
 );
 
 delimiter //
@@ -118,9 +123,25 @@ begin
            ('Title 2', 'Description 2', 1);
 
     INSERT INTO question (question_category, question_prompt, question_answer, question_type, question_round, question_order, theme_id)
-    VALUES ('category', 'question', 'answer', 'normal', 1, 1, 1),
+    VALUES ('category', 'prompt', 'answer', 'normal', 1, 1, 1),
            ('Category 2', 'Question 2', 'Answer 2', 'normal', 1, 2, 1),
-           ('Category 1', 'Question 3', 'Answer 3', 'halftime', 1, 1, 2);
+           ('Category 1', 'Question 3', 'Answer 3', 'halftime', 1, 1, 2),
+           ('category 1', 'Question 4', 'Answer 4', 'normal', 2, 1, 1);
+
+
+    INSERT INTO game(game_code, host_token, game_status, current_round, current_question_id, theme_id)
+    values ('code', 'token', 'lobby', 1, 1, 1),
+           ('code 2', 'token 2', 'question', 1, 1, 1);
+
+    insert into team(team_token, team_number, team_name, game_id)
+    VALUES ('token', 1, 'name', 1),
+           ('token 2', 2, 'name 2', 1);
+
+    insert into response(response_answer, response_wager, response_status, response_points, team_id, question_id)
+    values ('answer', 1, 'incorrect', 0, 1, 1),
+           ('answer 2', 3, 'correct', 3, 2,1),
+           ('answer', 3, 'correct', 0, 1, 2),
+           ('answer', 5, 'correct', 5, 1, 4);
 
 end //
 delimiter ;

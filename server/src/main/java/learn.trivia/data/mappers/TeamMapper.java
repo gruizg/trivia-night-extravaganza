@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 public class TeamMapper implements RowMapper<Team> {
 
+    private final GameMapper gameMapper = new GameMapper();
+
     @Override
     public Team mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -17,7 +19,7 @@ public class TeamMapper implements RowMapper<Team> {
         team.setTeamToken(rs.getString("team_token"));
         team.setTeamNumber(rs.getInt("team_number"));
         team.setTeamName(rs.getString("team_name"));
-        team.setGame(new GameMapper().mapRow(rs, rowNum));
+        team.setGame(gameMapper.mapRow(rs, rowNum));
 
         return team;
     }
