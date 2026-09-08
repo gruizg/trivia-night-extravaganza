@@ -60,8 +60,8 @@ public class ResponseService {
             result.addMessage("Response id cannot be set for `add` operation", ResultType.INVALID);
         }
 
-        if (response.isResponseCorrect()) {
-            result.addMessage("Response correct cannot be set for `add` operation", ResultType.INVALID);
+        if (response.getResponseStatus() != ResponseStatus.PENDING) {
+            result.addMessage("Response status cannot be set for `add` operation", ResultType.INVALID);
         }
 
         if (response.getResponsePoints() != 0) {
@@ -103,8 +103,10 @@ public class ResponseService {
                 result.addMessage("Wager must be between 0 and 15", ResultType.INVALID);
             }
         }
-        else if (questionType == QuestionType.HALFTIME && response.getResponseWager() != 0) {
-            result.addMessage("No wagers for halftime", ResultType.INVALID);
+        else if (questionType == QuestionType.HALFTIME) {
+            if (response.getResponseWager() != 0) {
+                result.addMessage("No wagers for halftime", ResultType.INVALID);
+            }
 
         } else {
             List<Integer> availableWagers = responseRepository.findAvailableWagers(

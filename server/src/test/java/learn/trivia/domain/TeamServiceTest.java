@@ -3,6 +3,7 @@ package learn.trivia.domain;
 import learn.trivia.data.doubles.GameRepositoryDouble;
 import learn.trivia.data.doubles.TeamRepositoryDouble;
 import learn.trivia.models.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TeamServiceTest {
 
-    TeamService service = new TeamService(new TeamRepositoryDouble(), new GameRepositoryDouble());
+    TeamService service;
 
     //TODO: IMPLEMENT TESTS
+
+    @BeforeEach
+    void setup() {
+        service = new TeamService(new TeamRepositoryDouble(), new GameRepositoryDouble());
+    }
 
     @Nested
     class Read {
@@ -181,8 +187,7 @@ class TeamServiceTest {
         @Test
         void shouldNotAddWhenGameNotInLobby() {
             Team toCreate = makeNewTeam();
-            Game game = makeExistingGame();
-            game.setGameStatus(GameStatus.QUESTION);
+            Game game = new Game(2, "code 2", "token 2", GameStatus.QUESTION, 1, makeExistingQuestion(), makeExistingTheme());
             toCreate.setGame(game);
 
             Result<Team> result = service.add(toCreate);

@@ -15,7 +15,7 @@ class ResponseTest {
         assertEquals(1, response.getResponseId());
         assertEquals("answer", response.getResponseAnswer());
         assertEquals(1, response.getResponseWager());
-        assertFalse(response.isResponseCorrect());
+        assertEquals(ResponseStatus.INCORRECT, response.getResponseStatus());
         assertEquals(0, response.getResponsePoints());
         assertEquals(makeExistingTeam(), response.getTeam());
         assertEquals(makeExistingQuestion(), response.getQuestion());
@@ -24,7 +24,7 @@ class ResponseTest {
     @Test
     void shouldBeSameResponse() {
         Response response1 = makeExistingResponse();
-        Response response2 = new Response(1, "answer", 1, false, 0, makeExistingTeam(), makeExistingQuestion());
+        Response response2 = new Response(1, "answer", 1, ResponseStatus.INCORRECT, 0, makeExistingTeam(), makeExistingQuestion());
 
         assertEquals(response1, response2);
     }
@@ -63,7 +63,7 @@ class ResponseTest {
         void notEqualWhenCorrectIsDifferent() {
             Response response1 = makeExistingResponse();
             Response response2 = makeExistingResponse();
-            response2.setResponseCorrect(true);
+            response2.setResponseStatus(ResponseStatus.CORRECT);
 
             assertNotEquals(response1, response2);
         }
@@ -107,18 +107,18 @@ class ResponseTest {
         @Test
         void shouldAwardPointsForCorrectAnswer() {
             Response response = makeNewResponse();
-            response.setResponseCorrect(true);
+            response.setResponseStatus(ResponseStatus.CORRECT);
 
-            assertTrue(response.isResponseCorrect());
+            assertEquals(ResponseStatus.CORRECT, response.getResponseStatus());
             assertEquals(response.getResponseWager(), response.getResponsePoints());
         }
 
         @Test
         void shouldNotAwardPointsForWrongAnswer() {
             Response response = makeNewResponse();
-            response.setResponseCorrect(false);
+            response.setResponseStatus(ResponseStatus.INCORRECT);
 
-            assertFalse(response.isResponseCorrect());
+            assertEquals(ResponseStatus.INCORRECT, response.getResponseStatus());
             assertEquals(0, response.getResponsePoints());
         }
     }

@@ -78,8 +78,8 @@ create table response (
                           response_id int primary key auto_increment,
                           response_answer text,
                           response_wager int,
-                          response_correct boolean,
-                          response_points int,
+                          response_status text,
+                          response_points int default 0,
                           team_id int not null,
                           question_id int not null,
                           constraint fk_response_team
@@ -91,5 +91,7 @@ create table response (
                               foreign key (question_id)
                                   references question(question_id)
                                   on delete cascade
-                                  on update cascade
+                                  on update cascade,
+                          constraint uq_response_team_question
+                              unique (team_id, question_id)
 );

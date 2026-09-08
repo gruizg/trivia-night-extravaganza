@@ -32,7 +32,7 @@
 - When a game starts, rules are presented
 - During each question, players will select a number of points to wager, and write their answer to the question open-ended style.
 - Players will be notified if their answer is correct after the host reveals the answer
-- Players can request to have incorrect responses ameneded and give written justification
+- Players can request to have incorrect responses amended and give written justification
 - Players will be notified of their ranking before halftime and final trivia
 - Players can manually wager points for final trivia
 - Players will see their final ranking after host announces

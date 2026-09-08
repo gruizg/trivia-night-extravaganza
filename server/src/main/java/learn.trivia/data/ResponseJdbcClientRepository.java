@@ -19,7 +19,7 @@ public class ResponseJdbcClientRepository implements ResponseRepository {
     }
 
     private final String SELECT = """
-                select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+                select r.response_id, r.response_answer, r.response_wager, r.response_status, r.response_points,
                        t.team_id, t.team_token, t.team_number, t.team_name,
                        q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
                        g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
@@ -82,15 +82,15 @@ public class ResponseJdbcClientRepository implements ResponseRepository {
     @Override
     public Response add(Response response) {
         final String sql = """
-                insert into response(response_answer, response_wager, response_correct, response_points, team_id, question_id)
-                    values (:response_answer, :response_wager, :response_correct, :response_points, :team_id, :question_id);
+                insert into response(response_answer, response_wager, response_status, response_points, team_id, question_id)
+                    values (:response_answer, :response_wager, :response_status, :response_points, :team_id, :question_id);
                 """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = client.sql(sql)
                 .param("response_answer", response.getResponseAnswer())
                 .param("response_wager", response.getResponseWager())
-                .param("response_correct", response.isResponseCorrect())
+                .param("response_status", response.getResponseStatus().getName())
                 .param("response_points", response.getResponsePoints())
                 .param("team_id", response.getTeam().getTeamId())
                 .param("question_id", response.getQuestion().getQuestionId())
@@ -106,13 +106,13 @@ public class ResponseJdbcClientRepository implements ResponseRepository {
     public boolean update(Response response) {
         final String sql = """
                 update response
-                set response_correct = ?,
+                set response_status = ?,
                     response_points = ?
                 where response_id = ?;
                 """;
 
         return client.sql(sql)
-                .param(response.isResponseCorrect())
+                .param(response.getResponseStatus().getName())
                 .param(response.getResponsePoints())
                 .param(response.getResponseId())
                 .update() > 0;

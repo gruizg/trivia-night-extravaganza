@@ -90,7 +90,7 @@ update game set
                 current_question_id = ?
 where game_id = ?;
 
-select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+select r.response_id, r.response_answer, r.response_wager, r.response_status, r.response_points,
        t.team_id, t.team_token, t.team_number, t.team_name,
        q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
        g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
@@ -106,7 +106,7 @@ from response r
 where r.response_id = ?;
 
 
-select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+select r.response_id, r.response_answer, r.response_wager, r.response_status, r.response_points,
        t.team_id, t.team_token, t.team_number, t.team_name,
        q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
        g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
@@ -122,7 +122,7 @@ from response r
 where g.game_id = ? and q.question_id = ?;
 
 
-select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+select r.response_id, r.response_answer, r.response_wager, r.response_status, r.response_points,
        t.team_id, t.team_token, t.team_number, t.team_name,
        q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
        g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
@@ -145,12 +145,12 @@ left join game g on t.game_id = g.game_id
 where t.team_id = ? and q.question_round = ?;
 
 update response
-set response_correct = ?,
+set response_status = ?,
     response_points = ?
 where response_id = ?;
 
 
-select r.response_id, r.response_answer, r.response_wager, r.response_correct, r.response_points,
+select r.response_id, r.response_answer, r.response_wager, r.response_status, r.response_points,
        t.team_id, t.team_token, t.team_number, t.team_name,
        q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
        g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,

@@ -1,10 +1,7 @@
 package learn.trivia.data.doubles;
 
 import learn.trivia.data.ResponseRepository;
-import learn.trivia.models.Question;
-import learn.trivia.models.QuestionType;
-import learn.trivia.models.Response;
-import learn.trivia.models.Team;
+import learn.trivia.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +15,11 @@ public class ResponseRepositoryDouble implements ResponseRepository {
     public ResponseRepositoryDouble() {
         responses.add(makeExistingResponse());
         Team team = new Team(2, "token 2", 2, "name 2", makeExistingGame());
-        responses.add(new Response(2,"answer 2", 3, true, 3, team, makeExistingQuestion()));
+        responses.add(new Response(2,"answer 2", 3, ResponseStatus.CORRECT, 3, team, makeExistingQuestion()));
         Question question = new Question  (2, "Category 2", "Question 2", "Answer 2", QuestionType.NORMAL, 1, 2, makeExistingTheme());
-        responses.add(new Response(3, "answer", 3, false, 0, makeExistingTeam(), question));
+        responses.add(new Response(3, "answer", 3, ResponseStatus.INCORRECT, 0, makeExistingTeam(), question));
         Question question4 = new Question  (2, "Category 2", "Question 2", "Answer 2", QuestionType.NORMAL, 2, 1, makeExistingTheme());
-        responses.add(new Response(4, "answer", 5, true, 5, makeExistingTeam(), question4));
+        responses.add(new Response(4, "answer", 5, ResponseStatus.CORRECT, 5, makeExistingTeam(), question4));
     }
 
     @Override

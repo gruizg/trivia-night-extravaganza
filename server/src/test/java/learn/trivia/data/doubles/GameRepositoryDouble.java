@@ -2,10 +2,11 @@ package learn.trivia.data.doubles;
 
 import learn.trivia.data.GameRepository;
 import learn.trivia.models.Game;
+import learn.trivia.models.GameStatus;
 
 import java.util.ArrayList;
 
-import static learn.trivia.TestDataHelpers.Models.makeExistingGame;
+import static learn.trivia.TestDataHelpers.Models.*;
 
 public class GameRepositoryDouble implements GameRepository {
 
@@ -13,6 +14,7 @@ public class GameRepositoryDouble implements GameRepository {
 
     public GameRepositoryDouble() {
         games.add(makeExistingGame());
+        games.add(new Game(2, "code 2", "token 2", GameStatus.QUESTION, 1, makeExistingQuestion(), makeExistingTheme()));
     }
 
     @Override
