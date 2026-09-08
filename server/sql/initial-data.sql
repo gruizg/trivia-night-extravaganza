@@ -35,7 +35,7 @@ VALUES ('Science', 'What planet is known as the Red Planet?', 'Mars', 'normal', 
 
        ('Mixed Knowledge', 'Which chemical element has the symbol "Au" on the periodic table?', 'Gold', 'final', 7, 1, 1);
 
-select * from theme
+select * from theme;
 
 select *
 from response;

@@ -78,8 +78,8 @@ create table response (
                           response_id int primary key auto_increment,
                           response_answer text,
                           response_wager int,
-                          response_correct boolean,
-                          response_points int,
+                          response_status text,
+                          response_points int default 0,
                           team_id int not null,
                           question_id int not null,
                           constraint fk_response_team
@@ -91,7 +91,9 @@ create table response (
                               foreign key (question_id)
                                   references question(question_id)
                                   on delete cascade
-                                  on update cascade
+                                  on update cascade,
+                          constraint uq_response_team_question
+                              unique (team_id, question_id)
 );
 
 delimiter //
@@ -128,17 +130,18 @@ begin
 
 
     INSERT INTO game(game_code, host_token, game_status, current_round, current_question_id, theme_id)
-    values ('code', 'token', 'lobby', 1, 1, 1);
+    values ('code', 'token', 'lobby', 1, 1, 1),
+           ('code 2', 'token 2', 'question', 1, 1, 1);
 
     insert into team(team_token, team_number, team_name, game_id)
     VALUES ('token', 1, 'name', 1),
            ('token 2', 2, 'name 2', 1);
 
-    insert into response(response_answer, response_wager, response_correct, response_points, team_id, question_id)
-    values ('answer', 1, false, 0, 1, 1),
-           ('answer 2', 3, true, 3, 2,1),
-           ('answer', 3, false, 0, 1, 2),
-           ('answer', 5, true, 5, 1, 4);
+    insert into response(response_answer, response_wager, response_status, response_points, team_id, question_id)
+    values ('answer', 1, 'incorrect', 0, 1, 1),
+           ('answer 2', 3, 'correct', 3, 2,1),
+           ('answer', 3, 'correct', 0, 1, 2),
+           ('answer', 5, 'correct', 5, 1, 4);
 
 end //
 delimiter ;
