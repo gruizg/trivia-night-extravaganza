@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TeamRow from "@/app/lobby/_components/TeamRow";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const POLL_MS = 3000;
 
 export default function LobbyGame() {

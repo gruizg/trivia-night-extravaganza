@@ -29,7 +29,7 @@ body {
 /*}*/
 
 .page-container {
-  @apply h-full flex-1 border-2 border-solid border-[#ff1493] rounded-xl p-11;
+  @apply h-full min-h-0 flex-1 border-2 border-solid border-[#ff1493] rounded-xl p-11;
 }
 
 .theme-btn, .join-btn {
@@ -46,3 +46,8 @@ body {
     dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200;
   }
 }
+/*@layer base {*/
+/*  div {*/
+/*    @apply border border-red-500;*/
+/*  }*/
+/*}*/

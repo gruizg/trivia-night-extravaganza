@@ -2,23 +2,41 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// Question type values as sent by the backend (learn.trivia.models.QuestionType).
 const HALFTIME = "HALFTIME";
 const FINAL = "FINAL";
 
-// Small badge for a graded response: green/red once the host has marked it,
-// a neutral "Ungraded" label if the host never got to it before revealing.
-function Verdict({ response }) {
-    if (response.responseCorrect === true) {
+async function parseErrorMessage(res) {
+    const raw = await res.text().catch(() => "");
+    if (!raw) return "Could not submit your answer.";
+
+    try {
+        const body = JSON.parse(raw);
+        if (Array.isArray(body)) return body.join(" ");
+        if (body?.message) return body.message;
+        return raw;
+    } catch {
+        return raw;
+    }
+}
+
+function Verdict({ response, showVerdict }) {
+    if (!showVerdict) {
+        return (
+            <span className="inline-block rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
+                Pending
+            </span>
+        );
+    }
+    if (response.responseStatus === "CORRECT") {
         return (
             <span className="inline-block rounded bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
                 Correct
             </span>
         );
     }
-    if (response.responseCorrect === false) {
+    if (response.responseStatus === "INCORRECT") {
         return (
             <span className="inline-block rounded bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">
                 Incorrect
@@ -27,7 +45,7 @@ function Verdict({ response }) {
     }
     return (
         <span className="inline-block rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
-            Ungraded
+            Pending
         </span>
     );
 }
@@ -46,8 +64,6 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
     const isHalftime = questionType === HALFTIME;
     const isFinal = questionType === FINAL;
 
-    // QUESTION = host is still accepting answers; REVIEW = closed, host is
-    // grading; REVEAL = host has revealed correctness for this question.
     const answersOpen = gameStatus === "QUESTION";
     const isRevealed = gameStatus === "REVEAL";
 
@@ -55,11 +71,14 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
         (r) => String(r.question?.questionId) === String(questionId)
     );
 
-    // Every graded, correct response contributes its wager to the score.
-    const score = responses.reduce(
-        (sum, r) => sum + (r.responseCorrect ? r.responseWager ?? 0 : 0),
-        0
-    );
+    // Only count points from current response if the answer was explicitly revealed
+    const score = responses.reduce((sum, r) => {
+        const isCurrent = String(r.question?.questionId) === String(questionId);
+        if (isCurrent && !isRevealed) {
+            return sum;
+        }
+        return sum + (r.responsePoints ?? 0);
+    }, 0);
 
     const history = [...responses]
         .filter((r) => String(r.question?.questionId) !== String(questionId))
@@ -76,12 +95,6 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
 
             const type = (questionData?.questionType ?? "").toUpperCase();
             if (type !== HALFTIME && type !== FINAL) {
-                // Fetch available wagers using the QUESTION's own round, not
-                // game.currentRound — the backend validates a submitted wager
-                // against question.getQuestionRound() directly, and that can
-                // drift from game.currentRound (e.g. it's deliberately left
-                // untouched across a HALFTIME question). Using the same field
-                // the backend checks keeps the two guaranteed in sync.
                 const wagersRes = await fetch(
                     `${API_URL}/response/wagers/${teamId}/${questionData.questionRound}`
                 );
@@ -97,12 +110,14 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
         }
     }, [questionId, teamId]);
 
-    // Reset the form whenever the question changes.
     useEffect(() => {
         setAnswerText("");
         setSelectedWager("");
+    }, [questionId]);
+
+    useEffect(() => {
         loadQuestionAndResponses();
-    }, [questionId, loadQuestionAndResponses]);
+    }, [questionId, gameStatus, loadQuestionAndResponses]);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -120,16 +135,12 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                     responseAnswer: answerText.trim(),
                     responseWager: wagerValue,
                     team: { teamId },
-                    question: { questionId },
+                    question: { questionId, questionRound: question?.questionRound },
                 }),
             });
 
             if (!res.ok) {
-                const body = await res.json().catch(() => null);
-                const message = Array.isArray(body)
-                    ? body.join(" ")
-                    : body?.message ?? "Could not submit your answer.";
-                throw new Error(message);
+                throw new Error(await parseErrorMessage(res));
             }
 
             const created = await res.json();
@@ -143,11 +154,10 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
 
     return (
         <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Team identity + history */}
             <div className="flex flex-col gap-4">
                 <div className="flex items-baseline justify-between">
                     <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Team {myTeam?.teamId} {myTeam?.teamName}
+                        Team {myTeam?.teamNumber} {myTeam?.teamName}
                     </h1>
                     <p className="text-sm font-semibold text-gray-500">Score: {score}</p>
                 </div>
@@ -166,7 +176,7 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                                         <p className="font-semibold text-gray-800 dark:text-gray-200">
                                             {r.question?.questionPrompt ?? `Question ${r.question?.questionId}`}
                                         </p>
-                                        <Verdict response={r} />
+                                        <Verdict response={r} showVerdict={true} />
                                     </div>
                                     <p className="mt-1 text-gray-600 dark:text-gray-400">
                                         Answered: {r.responseAnswer}
@@ -181,7 +191,6 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                 </div>
             </div>
 
-            {/* Current question */}
             <div className="flex flex-col gap-4">
                 <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                     <p className="font-semibold text-gray-900 dark:text-white">
@@ -198,7 +207,7 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                         <div>
                             <div className="mb-4 flex items-center justify-between gap-2">
                                 <p className="text-sm font-bold uppercase text-gray-400">Your Answer</p>
-                                {isRevealed && <Verdict response={myResponse} />}
+                                <Verdict response={myResponse} showVerdict={isRevealed} />
                             </div>
                             <p className="mb-4 text-lg text-gray-800 dark:text-gray-200">
                                 {myResponse.responseAnswer}
