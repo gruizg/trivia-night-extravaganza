@@ -66,12 +66,13 @@ public class Models {
         Response response = new Response();
         response.setResponseAnswer("new answer");
         response.setResponseWager(1);
+        response.setResponseStatus(ResponseStatus.PENDING);
         response.setTeam(makeExistingTeam());
         response.setQuestion(makeExistingQuestion());
         return response;
     }
 
     public static Response makeExistingResponse() {
-        return new Response(1, "answer", 1, false, 0, makeExistingTeam(), makeExistingQuestion());
+        return new Response(1, "answer", 1, ResponseStatus.INCORRECT, 0, makeExistingTeam(), makeExistingQuestion());
     }
 }

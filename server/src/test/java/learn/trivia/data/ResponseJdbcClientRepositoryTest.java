@@ -1,6 +1,7 @@
 package learn.trivia.data;
 
 import learn.trivia.models.Response;
+import learn.trivia.models.ResponseStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class ResponseJdbcClientRepositoryTest {
             assertEquals(1, actual.getResponseId());
             assertEquals("answer", actual.getResponseAnswer());
             assertEquals(1, actual.getResponseWager());
-            assertFalse(actual.isResponseCorrect());
+            assertEquals(ResponseStatus.INCORRECT, actual.getResponseStatus());
             assertEquals(0, actual.getResponsePoints());
             assertEquals(makeExistingQuestion(), actual.getQuestion());
             assertEquals(makeExistingTeam(), actual.getTeam());
@@ -123,7 +124,7 @@ class ResponseJdbcClientRepositoryTest {
         @Test
         void shouldUpdate() {
             Response expected = makeExistingResponse();
-            expected.setResponseCorrect(true);
+            expected.setResponseStatus(ResponseStatus.CORRECT);
             assertTrue(repository.update(expected));
 
             Response actual = repository.findById(1);

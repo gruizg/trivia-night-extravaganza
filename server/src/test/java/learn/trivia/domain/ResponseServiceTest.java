@@ -5,6 +5,7 @@ import learn.trivia.data.doubles.QuestionRepositoryDouble;
 import learn.trivia.data.doubles.ResponseRepositoryDouble;
 import learn.trivia.data.doubles.TeamRepositoryDouble;
 import learn.trivia.models.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseServiceTest {
 
-    ResponseService service = new ResponseService(new ResponseRepositoryDouble(), new TeamRepositoryDouble(), new QuestionRepositoryDouble(), new GameRepositoryDouble());
+    ResponseService service;
 
+    @BeforeEach
+    void setup() {
+        service = new ResponseService(new ResponseRepositoryDouble(), new TeamRepositoryDouble(), new QuestionRepositoryDouble(), new GameRepositoryDouble());
+    }
     @Nested
     class Read {
 
@@ -208,7 +213,7 @@ class ResponseServiceTest {
         @Test
         void shouldUpdate() {
             Response toUpdate = makeExistingResponse();
-            toUpdate.setResponseCorrect(true);
+            toUpdate.setResponseStatus(ResponseStatus.CORRECT);
 
             Result<Response> result = service.update(toUpdate);
 
@@ -216,14 +221,14 @@ class ResponseServiceTest {
             assertEquals(ResultType.SUCCESS, result.getType());
 
             Response actual = service.findById(1);
-            assertTrue(actual.isResponseCorrect());
+            assertEquals(ResponseStatus.CORRECT, actual.getResponseStatus());
             assertEquals(toUpdate.getResponseWager(), actual.getResponsePoints());
         }
 
         @Test
         void shouldNotChangeWhenAnswerIsIncorrect() {
             Response toUpdate = makeExistingResponse();
-            toUpdate.setResponseCorrect(false);
+            toUpdate.setResponseStatus(ResponseStatus.INCORRECT);
 
             Result<Response> result = service.update(toUpdate);
 
@@ -231,7 +236,7 @@ class ResponseServiceTest {
             assertEquals(ResultType.SUCCESS, result.getType());
 
             Response actual = result.getPayload();
-            assertFalse(actual.isResponseCorrect());
+            assertEquals(ResponseStatus.INCORRECT, actual.getResponseStatus());
             assertEquals(toUpdate, actual);
             assertEquals(makeExistingResponse(), actual);
         }

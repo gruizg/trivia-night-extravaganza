@@ -66,6 +66,8 @@ class GameJdbcClientRepositoryTest {
 
             Game expected = makeExistingGame();
             expected.setGameId(2);
+            expected.setCurrentRound(0);
+            expected.setCurrentQuestion(null);
             Game actual = repository.add(makeExistingGame());
 
             assertNotNull(actual);

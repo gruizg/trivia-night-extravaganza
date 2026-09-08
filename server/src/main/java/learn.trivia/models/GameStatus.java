@@ -2,6 +2,7 @@ package learn.trivia.models;
 
 public enum GameStatus {
     LOBBY("lobby"),
+    INTRO("intro"),
     QUESTION("question"),
     REVIEW("review"),
     REVEAL("reveal"),
