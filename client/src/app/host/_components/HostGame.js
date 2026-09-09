@@ -516,7 +516,7 @@ export default function HostGame() {
                         ) : isReviewing ? (
                             <button
                                 onClick={revealAnswer}
-                                className="flex-1 btn-purple px-4 py-3 text-sm"
+                                className="flex-1 btn-secondary px-4 py-3 text-sm"
                             >
                                 Reveal Answer
                             </button>

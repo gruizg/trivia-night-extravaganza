@@ -247,10 +247,10 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
         <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="flex flex-col gap-4">
                 <div className="flex items-baseline justify-between">
-                    <h1 className="text-xl heading">
+                    <h1 className="mt-2 text-3xl heading sm:text-4xl">
                         Team {myTeam?.teamNumber} {myTeam?.teamName}
                     </h1>
-                    <p className="text-sm text-subtle">Score: {score}</p>
+                    <p className="label-caps-accent">Score: {score}</p>
                 </div>
 
                 <div className="flex-1 overflow-y-auto card p-4">

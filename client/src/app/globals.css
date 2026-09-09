@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
+/* LIGHT MODE DEFAULTS */
 :root {
   --background: #ffffff;
-  --foreground: #000000;
+  --foreground: #171717;
 }
 
 @theme inline {
@@ -12,16 +13,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* DARK MODE OVERRIDES */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
-    --foreground: #ededed;
+    --background: #333333; /* Your custom dark background */
+    --foreground: #ededed; /* Off-white text */
   }
 }
 
 body {
-  background: var(--foreground);
-  color: var(--background);
+  background: var(--background);
+  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 /*main {*/
@@ -63,21 +65,21 @@ body {
     @apply rounded-xl border border-gray-200 bg-white shadow-sm dark:border-[#ff1493] dark:bg-gray-900;
   }
   .card-compact {
-    @apply rounded-lg border border-gray-200 bg-white shadow-sm dark:border-[#ff1493] dark:bg-gray-900;
+    @apply rounded-lg border border-gray-200 bg-white shadow-sm dark:border-[#ff1493] dark:bg-gray-900 hover:shadow-md hover:border-blue-400;
   }
   .list-row {
-    @apply rounded-lg border border-gray-200 dark:border-[#ff1493];
+    @apply rounded-lg border border-gray-200 dark:border-blue-400;
   }
 
   /* Headings */
   .heading {
-    @apply font-bold text-gray-900 dark:text-pink-600;
+    @apply font-bold text-gray-900 dark:text-slate-100;
   }
   .heading-semibold {
-    @apply font-semibold text-gray-900 dark:text-white;
+    @apply font-semibold text-gray-900 dark:text-slate-100;
   }
   .heading-black {
-    @apply font-black text-gray-900 dark:text-white;
+    @apply font-black text-gray-900 dark:text-slate-100;
   }
   .text-emphasis {
     @apply font-medium text-gray-900 dark:text-white;
@@ -88,16 +90,16 @@ body {
 
   /* Body / muted text */
   .text-body {
-    @apply text-gray-800 dark:text-gray-200;
+    @apply text-gray-800 dark:text-slate-100;
   }
   .text-secondary {
-    @apply text-gray-700 dark:text-gray-300;
+    @apply text-gray-700 dark:text-gray-200;
   }
   .text-muted {
-    @apply text-gray-600 dark:text-gray-400;
+    @apply text-gray-600 dark:text-gray-300;
   }
   .text-subtle {
-    @apply text-gray-500 dark:text-gray-400;
+    @apply text-gray-500 dark:text-gray-300;
   }
   .text-dim {
     @apply text-gray-500;
@@ -135,12 +137,13 @@ body {
     @apply text-sm font-bold uppercase text-gray-500 dark:text-gray-400;
   }
 
+
   /* Buttons */
   .btn-primary {
-    @apply rounded-lg bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-60;
+    @apply rounded-lg bg-gray-900 font-bold text-white hover:bg-[#ff1493] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 disabled:opacity-60;
   }
   .btn-secondary {
-    @apply rounded bg-gray-100 font-bold text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300;
+    @apply rounded-lg bg-blue-600 font-bold text-white hover:bg-[#ff1493] transition-colors disabled:opacity-60;
   }
   .btn-ghost {
     @apply font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800;
@@ -197,7 +200,7 @@ body {
 
   /* Inputs */
   .input-field {
-    @apply rounded-lg border border-gray-300 text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white;
+    @apply rounded-lg border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white;
   }
 
   /* Two-state grading toggles (unselected vs. selected) */

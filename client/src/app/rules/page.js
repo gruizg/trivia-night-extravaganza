@@ -30,7 +30,7 @@ export default function Rules() {
                     </p>
                     <p className="mt-2 text-secondary">
                         Each wager value can only be used once per question — you can't
-                        stack multiple 5s on the same answer.
+                        stack multiple 5s in the same round.
                     </p>
                 </section>
 
@@ -44,7 +44,7 @@ export default function Rules() {
                         engine skills.
                     </p>
                     <p className="mt-2 text-secondary">
-                        Anyone caught cheating will be publicly shamed, publicly
+                        Anyone caught cheating will be publicly shamed,
                         humiliated in front of their peers, and permanently banned from
                         ever playing trivia again. We don't make the rules. Actually, we
                         do. This is the rule.
