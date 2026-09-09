@@ -1,5 +1,6 @@
 package learn.trivia;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
@@ -15,11 +16,14 @@ public class App {
 
     @Configuration
     public class WebConfig implements WebMvcConfigurer {
+
+        @Value("${cors.allowed-origins}")
+        private String[] allowedOrigins;
+
         @Override
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/api/**")
-                    .allowedOrigins("http://localhost:3000",
-                            "http://10.0.0.80:3000")
+                    .allowedOrigins(allowedOrigins)
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
         }
     }
