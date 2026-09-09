@@ -37,21 +37,21 @@ export default function ThemeCard({ theme }) {
             <button
                 onClick={handleClick}
                 disabled={loading}
-                className="flex w-full flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 text-left shadow-sm transition-all hover:shadow-md hover:border-blue-400 disabled:opacity-60 dark:border-gray-800 dark:bg-gray-900"
+                className="flex w-full flex-col justify-between card p-6 text-left transition-all hover:shadow-md hover:border-blue-400 disabled:opacity-60"
             >
                 <div>
                     {/* Title and Author Header */}
                     <div className="mb-3">
-                        <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        <h3 className="text-xl heading tracking-tight">
                             {theme.themeTitle}
                         </h3>
-                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <p className="text-sm font-medium text-subtle">
                             by {theme.user.username}
                         </p>
                     </div>
 
                     {/* Description */}
-                    <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                    <p className="text-sm leading-relaxed text-muted">
                         {theme.themeDescription}
                     </p>
                 </div>
@@ -60,7 +60,7 @@ export default function ThemeCard({ theme }) {
                     {loading ? "Starting game..." : ""}
                 </p>
 
-                {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+                {error && <p className="mt-2 text-xs text-error">{error}</p>}
             </button>
         </li>
     );

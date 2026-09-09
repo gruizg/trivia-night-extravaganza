@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import useGameEvents from "@/app/hooks/useGameEvents";
+import { loadAmendedResponses, markResponseAmended } from "@/app/lobby/_components/amendedResponsesCache";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -25,34 +26,34 @@ async function parseErrorMessage(res) {
 function Verdict({ response, showVerdict }) {
     if (!showVerdict) {
         return (
-            <span className="inline-block rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
+            <span className="badge badge-neutral px-2 py-0.5">
                 Pending
             </span>
         );
     }
     if (response.responseStatus === "CORRECT") {
         return (
-            <span className="inline-block rounded bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
+            <span className="badge badge-success px-2 py-0.5">
                 Correct
             </span>
         );
     }
     if (response.responseStatus === "INCORRECT") {
         return (
-            <span className="inline-block rounded bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">
+            <span className="badge badge-error px-2 py-0.5">
                 Incorrect
             </span>
         );
     }
     if (response.responseStatus === "AMEND") {
         return (
-            <span className="inline-block rounded bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-700">
+            <span className="badge badge-warning px-2 py-0.5">
                 Amendment Requested
             </span>
         );
     }
     return (
-        <span className="inline-block rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
+        <span className="badge badge-neutral px-2 py-0.5">
             Pending
         </span>
     );
@@ -75,6 +76,15 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
     const [amendReason, setAmendReason] = useState("");
     const [amendSubmitting, setAmendSubmitting] = useState(false);
     const [amendError, setAmendError] = useState(null);
+    const [amendedResponseIds, setAmendedResponseIds] = useState([]);
+
+    // Load which of this team's responses already had an amend request
+    // sent, so a response the host denied (which reverts to the same
+    // INCORRECT status a never-amended response has) doesn't offer the
+    // button again.
+    useEffect(() => {
+        setAmendedResponseIds(loadAmendedResponses(teamId));
+    }, [teamId]);
 
     const questionType = (question?.questionType ?? "").toUpperCase();
     const isHalftime = questionType === HALFTIME;
@@ -223,6 +233,8 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
             setResponses((prev) =>
                 prev.map((r) => (r.responseId === updated.responseId ? updated : r))
             );
+            markResponseAmended(teamId, updated.responseId);
+            setAmendedResponseIds((prev) => [...prev, updated.responseId]);
             closeAmendForm();
         } catch (err) {
             setAmendError(err.message);
@@ -235,36 +247,38 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
         <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="flex flex-col gap-4">
                 <div className="flex items-baseline justify-between">
-                    <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-xl heading">
                         Team {myTeam?.teamNumber} {myTeam?.teamName}
                     </h1>
-                    <p className="text-sm font-semibold text-gray-500">Score: {score}</p>
+                    <p className="text-sm text-subtle">Score: {score}</p>
                 </div>
 
-                <div className="flex-1 overflow-y-auto rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="flex-1 overflow-y-auto card p-4">
                     {history.length === 0 ? (
-                        <p className="text-sm text-gray-400">No previous questions yet.</p>
+                        <p className="text-hint">No previous questions yet.</p>
                     ) : (
                         <ul className="flex flex-col gap-3">
                             {history.map((r) => (
                                 <li
                                     key={r.responseId}
-                                    className="rounded-lg border border-gray-200 p-3 text-sm dark:border-gray-800"
+                                    className="list-row p-3 text-sm"
                                 >
                                     <div className="flex items-center justify-between gap-2">
-                                        <p className="font-semibold text-gray-800 dark:text-gray-200">
+                                        <p className="font-semibold text-body">
                                             {r.question?.questionPrompt ?? `Question ${r.question?.questionId}`}
                                         </p>
                                         <Verdict response={r} showVerdict={true} />
                                     </div>
-                                    <p className="mt-1 text-gray-600 dark:text-gray-400">
+                                    <p className="mt-1 text-muted">
                                         Answered: {r.responseAnswer}
                                     </p>
                                     {r.responseWager > 0 && (
-                                        <p className="text-gray-500">Wagered: {r.responseWager}</p>
+                                        <p className="text-dim">Wagered: {r.responseWager}</p>
                                     )}
 
-                                    {r.responseStatus === "INCORRECT" && amendingId !== r.responseId && (
+                                    {r.responseStatus === "INCORRECT" &&
+                                        amendingId !== r.responseId &&
+                                        !amendedResponseIds.includes(r.responseId) && (
                                         <button
                                             onClick={() => openAmendForm(r.responseId)}
                                             className="mt-2 text-xs font-bold text-blue-600 hover:underline"
@@ -274,55 +288,55 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
                                     )}
 
                                     {r.responseStatus === "AMEND" && r.responseAmendReason && (
-                                        <p className="mt-2 text-xs italic text-gray-500">
+                                        <p className="mt-2 text-xs italic text-subtle">
                                             Your reason: "{r.responseAmendReason}"
                                         </p>
                                     )}
 
                                     {amendingId === r.responseId && (
                                         <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900 dark:bg-blue-950">
-                                            <p className="text-xs font-bold uppercase text-gray-500">
+                                            <p className="label-caps-sm">
                                                 Question
                                             </p>
-                                            <p className="text-sm text-gray-800 dark:text-gray-200">
+                                            <p className="text-sm text-body">
                                                 {r.question?.questionPrompt ?? `Question ${r.question?.questionId}`}
                                             </p>
 
-                                            <p className="mt-2 text-xs font-bold uppercase text-gray-500">
+                                            <p className="mt-2 label-caps-sm">
                                                 Your Answer
                                             </p>
-                                            <p className="text-sm text-gray-800 dark:text-gray-200">
+                                            <p className="text-sm text-body">
                                                 {r.responseAnswer}
                                             </p>
 
-                                            <label className="mt-3 flex flex-col gap-1 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                            <label className="mt-3 flex flex-col gap-1 text-xs font-semibold text-secondary">
                                                 Why should this have been marked correct?
                                                 <textarea
                                                     value={amendReason}
                                                     onChange={(e) => setAmendReason(e.target.value)}
                                                     required
                                                     rows={3}
-                                                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                                    className="input-field px-3 py-2 text-sm"
                                                     placeholder="Explain your reasoning..."
                                                 />
                                             </label>
 
                                             {amendError && (
-                                                <p className="mt-2 text-xs text-red-600">{amendError}</p>
+                                                <p className="mt-2 text-xs text-error">{amendError}</p>
                                             )}
 
                                             <div className="mt-3 flex gap-2">
                                                 <button
                                                     onClick={() => submitAmendRequest(r)}
                                                     disabled={amendSubmitting || !amendReason.trim()}
-                                                    className="rounded bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-60"
+                                                    className="btn-primary px-3 py-1.5 text-xs"
                                                 >
                                                     {amendSubmitting ? "Sending..." : "Send Request"}
                                                 </button>
                                                 <button
                                                     onClick={closeAmendForm}
                                                     disabled={amendSubmitting}
-                                                    className="rounded bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
+                                                    className="btn-secondary px-3 py-1.5 text-xs"
                                                 >
                                                     Cancel
                                                 </button>
@@ -337,60 +351,65 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
             </div>
 
             <div className="flex flex-col gap-4">
-                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="card p-4">
                     {roundLabel && (
                         <span
-                            className={`mb-2 inline-block rounded-full px-3 py-1 text-xs font-bold uppercase ${
+                            className={`mb-2 badge-round px-3 py-1 ${
                                 isHalftime
-                                    ? "bg-amber-100 text-amber-700"
+                                    ? "badge-round-amber"
                                     : isFinal
-                                        ? "bg-purple-100 text-purple-700"
-                                        : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                                        ? "badge-round-purple"
+                                        : "badge-round-neutral"
                             }`}
                         >
                             {roundLabel}
                         </span>
                     )}
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <p className="heading-semibold">
                         {question?.questionCategory}: {question?.questionPrompt}
                     </p>
                 </div>
 
                 {error && (
-                    <p className="rounded bg-red-100 px-4 py-2 text-sm text-red-700">{error}</p>
+                    <p className="alert-error px-4 py-2">{error}</p>
                 )}
 
-                <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                {/* min-h keeps this card's footprint stable across its
+                    tallest state (the answer form) so switching between
+                    form / "no answer" / "your answer" as gameStatus
+                    changes doesn't resize the box and flash the
+                    border/background on every transition. */}
+                <div className="card p-6 min-h-[300px]">
                     {myResponse ? (
                         <div>
                             <div className="mb-4 flex items-center justify-between gap-2">
-                                <p className="text-sm font-bold uppercase text-gray-400">Your Answer</p>
+                                <p className="label-caps">Your Answer</p>
                                 <Verdict response={myResponse} showVerdict={isRevealed} />
                             </div>
-                            <p className="mb-4 text-lg text-gray-800 dark:text-gray-200">
+                            <p className="mb-4 text-lg text-body">
                                 {myResponse.responseAnswer}
                             </p>
                             {!isHalftime && (
                                 <>
-                                    <p className="text-sm font-bold uppercase text-gray-400">
+                                    <p className="label-caps">
                                         Points Wagered
                                     </p>
-                                    <p className="mb-4 text-lg text-gray-800 dark:text-gray-200">
+                                    <p className="mb-4 text-lg text-body">
                                         {myResponse.responseWager}
                                     </p>
                                 </>
                             )}
                             {isRevealed && (
                                 <>
-                                    <p className="text-sm font-bold uppercase text-gray-400">
+                                    <p className="label-caps">
                                         Correct Answer
                                     </p>
-                                    <p className="mb-4 text-lg text-gray-800 dark:text-gray-200">
+                                    <p className="mb-4 text-lg text-body">
                                         {question?.questionAnswer ?? "—"}
                                     </p>
                                 </>
                             )}
-                            <p className="text-sm font-semibold text-gray-500">
+                            <p className="text-sm text-subtle">
                                 {isRevealed
                                     ? "Waiting for the next question..."
                                     : answersOpen
@@ -398,18 +417,18 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
                                         : "Answers are closed. Waiting for the reveal..."}
                             </p>
                         </div>
-                    ) : loading ? (
-                        <p className="text-sm text-gray-400">Loading question...</p>
+                    ) : loading && !question ? (
+                        <p className="text-hint">Loading question...</p>
                     ) : !answersOpen ? (
                         <div>
-                            <p className="text-sm font-bold uppercase text-gray-400">Your Answer</p>
-                            <p className="mt-2 text-lg text-gray-400">No answer submitted.</p>
+                            <p className="label-caps">Your Answer</p>
+                            <p className="mt-2 text-lg text-muted-light">No answer submitted.</p>
                             {isRevealed && (
                                 <>
-                                    <p className="mt-4 text-sm font-bold uppercase text-gray-400">
+                                    <p className="mt-4 label-caps">
                                         Correct Answer
                                     </p>
-                                    <p className="text-lg text-gray-800 dark:text-gray-200">
+                                    <p className="text-lg text-body">
                                         {question?.questionAnswer ?? "—"}
                                     </p>
                                 </>
@@ -421,12 +440,12 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
                                 value={answerText}
                                 onChange={(e) => setAnswerText(e.target.value)}
                                 required
-                                className="rounded-lg border border-gray-300 px-3 py-3 text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                className="input-field px-3 py-3"
                                 placeholder="Type your answer"
                             />
 
                             {isFinal && (
-                                <label className="flex flex-col gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                <label className="flex flex-col gap-1 field-label">
                                     Wager (0-15)
                                     <input
                                         type="number"
@@ -435,7 +454,7 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
                                         value={selectedWager}
                                         onChange={(e) => setSelectedWager(e.target.value)}
                                         required
-                                        className="w-24 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                        className="w-24 input-field px-3 py-2"
                                     />
                                 </label>
                             )}
@@ -443,12 +462,12 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
                             {!isHalftime && !isFinal && (
                                 <div className="flex flex-wrap items-center gap-4">
                                     {wagers.length === 0 ? (
-                                        <p className="text-sm text-gray-400">No wagers available.</p>
+                                        <p className="text-hint">No wagers available.</p>
                                     ) : (
                                         wagers.map((w) => (
                                             <label
                                                 key={w}
-                                                className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+                                                className="flex items-center gap-1.5 text-sm font-medium text-secondary"
                                             >
                                                 <input
                                                     type="radio"
@@ -469,7 +488,7 @@ export default function TeamGameView({ teamId, gameId, questionId, gameStatus, m
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-60"
+                                className="btn-primary px-4 py-3 text-sm"
                             >
                                 {submitting ? "Submitting..." : "Submit"}
                             </button>

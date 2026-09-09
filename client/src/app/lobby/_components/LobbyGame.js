@@ -146,7 +146,7 @@ export default function LobbyGame() {
         return (
             <div>
                 <h1 className="mb-4 text-2xl font-bold">Lobby</h1>
-                <p className="text-gray-500">
+                <p className="text-dim">
                     No game selected. Choose a theme from the Themes page to start one.
                 </p>
             </div>
@@ -158,45 +158,45 @@ export default function LobbyGame() {
             <h1 className="mb-4 text-2xl font-bold">Lobby</h1>
 
             {error && (
-                <p className="mb-4 rounded bg-red-100 px-4 py-2 text-sm text-red-700">{error}</p>
+                <p className="mb-4 alert-error px-4 py-2">{error}</p>
             )}
 
             <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Theme info + game code */}
                 <div className="flex flex-col gap-6">
-                    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <h2 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">
+                    <div className="card p-6">
+                        <h2 className="mb-2 text-lg heading">
                             Theme Info
                         </h2>
                         {theme ? (
                             <>
-                                <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                                <p className="text-xl heading-semibold">
                                     {theme.themeTitle}
                                 </p>
-                                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                                <p className="mt-1 text-sm text-muted">
                                     {theme.themeDescription}
                                 </p>
                             </>
                         ) : (
-                            <p className="text-sm text-gray-400">Loading theme...</p>
+                            <p className="text-hint">Loading theme...</p>
                         )}
                     </div>
 
-                    <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <p className="mb-2 text-sm font-bold uppercase text-gray-400">Game Code</p>
-                        <p className="text-4xl font-black tracking-widest text-gray-900 dark:text-white">
+                    <div className="flex flex-1 flex-col items-center justify-center card p-6">
+                        <p className="mb-2 label-caps">Game Code</p>
+                        <p className="text-4xl heading-black tracking-widest">
                             {game?.gameCode ?? "----"}
                         </p>
 
                         <button
                             onClick={startGame}
                             disabled={teams.length === 0 || starting}
-                            className="mt-6 rounded-lg bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+                            className="mt-6 btn-primary px-6 py-3 text-sm disabled:opacity-50"
                         >
                             {starting ? "Starting..." : "Start Game"}
                         </button>
                         {teams.length === 0 && (
-                            <p className="mt-2 text-xs text-gray-400">
+                            <p className="mt-2 text-xs text-muted-light">
                                 Waiting for at least one team to join...
                             </p>
                         )}
@@ -204,7 +204,7 @@ export default function LobbyGame() {
                         <button
                             onClick={stopIncomingTeams}
                             disabled={!isAcceptingTeams || locking}
-                            className="mt-3 rounded-lg border border-gray-300 px-6 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                            className="mt-3 btn-outline px-6 py-2 text-sm"
                         >
                             {isAcceptingTeams
                                 ? locking
@@ -216,20 +216,20 @@ export default function LobbyGame() {
                 </div>
 
                 {/* Incoming teams */}
-                <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="flex h-full flex-col card p-6">
                     <div className="mb-4 flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                        <h2 className="text-lg heading">
                             Incoming Teams
                         </h2>
                         {!isAcceptingTeams && (
-                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="badge-round badge-round-neutral px-3 py-1">
                                 Not accepting new teams
                             </span>
                         )}
                     </div>
 
                     {teams.length === 0 ? (
-                        <p className="text-sm text-gray-400">No teams have joined yet.</p>
+                        <p className="text-hint">No teams have joined yet.</p>
                     ) : (
                         <ul className="flex flex-col gap-3 overflow-y-auto">
                             {teams.map((team, index) => (

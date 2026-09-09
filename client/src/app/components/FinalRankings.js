@@ -60,19 +60,19 @@ export default function FinalRankings({ gameId, highlightTeamId }) {
 
     return (
         <div className="flex h-full flex-col items-center justify-center">
-            <h1 className="mb-2 text-3xl font-black text-gray-900 dark:text-white">
+            <h1 className="mb-2 text-3xl heading-black">
                 Final Rankings
             </h1>
-            <p className="mb-8 text-sm font-semibold text-gray-500">Game Over</p>
+            <p className="mb-8 text-sm font-semibold text-dim">Game Over</p>
 
             {error && (
-                <p className="mb-4 rounded bg-red-100 px-4 py-2 text-sm text-red-700">{error}</p>
+                <p className="mb-4 alert-error px-4 py-2">{error}</p>
             )}
 
             {loading ? (
-                <p className="text-sm text-gray-400">Loading final rankings...</p>
+                <p className="text-hint">Loading final rankings...</p>
             ) : teams.length === 0 ? (
-                <p className="text-sm text-gray-400">No teams played this game.</p>
+                <p className="text-hint">No teams played this game.</p>
             ) : (
                 <ul className="flex w-full max-w-md flex-col gap-3">
                     {teams.map((team, index) => {
@@ -82,32 +82,30 @@ export default function FinalRankings({ gameId, highlightTeamId }) {
                             <li
                                 key={team.teamId}
                                 className={`flex items-center justify-between gap-3 rounded-xl border p-4 shadow-sm ${
-                                    isMe
-                                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-500 dark:border-blue-400 dark:bg-blue-950"
-                                        : "border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+                                    isMe ? "rank-row-highlight" : "rank-row"
                                 }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <span
                                         className={`text-xl font-black ${
-                                            index === 0 ? "text-amber-500" : "text-gray-400"
+                                            index === 0 ? "rank-number-first" : "rank-number"
                                         }`}
                                     >
                                         #{index + 1}
                                     </span>
                                     <div>
-                                        <p className="font-bold text-gray-900 dark:text-white">
+                                        <p className="heading">
                                             {team.teamName}
                                             {isMe && (
-                                                <span className="ml-2 rounded-full bg-blue-600 px-2 py-0.5 text-xs font-bold uppercase text-white">
+                                                <span className="ml-2 badge-round bg-blue-600 px-2 py-0.5 text-white">
                                                     You
                                                 </span>
                                             )}
                                         </p>
-                                        <p className="text-xs text-gray-400">Team {team.teamNumber}</p>
+                                        <p className="text-xs text-muted-light">Team {team.teamNumber}</p>
                                     </div>
                                 </div>
-                                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                                <span className="text-xl heading">
                                     {team.score}
                                 </span>
                             </li>

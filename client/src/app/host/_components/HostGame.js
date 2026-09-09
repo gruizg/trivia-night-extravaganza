@@ -418,7 +418,7 @@ export default function HostGame() {
         return (
             <div>
                 <h1 className="mb-4 text-2xl font-bold">Host</h1>
-                <p className="text-gray-500">
+                <p className="text-dim">
                     No game selected. Start a game from the Themes page to host.
                 </p>
             </div>
@@ -439,24 +439,24 @@ export default function HostGame() {
             <h1 className="mb-4 text-2xl font-bold">Host</h1>
 
             {error && (
-                <p className="mb-4 rounded bg-red-100 px-4 py-2 text-sm text-red-700">{error}</p>
+                <p className="mb-4 alert-error px-4 py-2">{error}</p>
             )}
 
             <div className="flex flex-1 min-h-0 flex-col gap-6 lg:flex-row">
                 <div className="flex min-h-0 flex-col gap-4 lg:min-w-0 lg:flex-1">
-                    <div className="flex-1 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 overflow-y-auto">
+                    <div className="flex-1 card p-6 overflow-y-auto">
                         <div className="mb-2 flex items-center justify-between gap-2">
-                            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                            <h2 className="text-lg heading">
                                 Current Question
                             </h2>
                             {roundLabel && (
                                 <span
-                                    className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${
+                                    className={`badge-round px-3 py-1 ${
                                         isHalftime
-                                            ? "bg-amber-100 text-amber-700"
+                                            ? "badge-round-amber"
                                             : isFinal
-                                                ? "bg-purple-100 text-purple-700"
-                                                : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                                                ? "badge-round-purple"
+                                                : "badge-round-neutral"
                                     }`}
                                 >
                                     {roundLabel}
@@ -465,24 +465,24 @@ export default function HostGame() {
                         </div>
 
                         {question?.questionCategory && (
-                            <p className="mb-1 text-sm font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                            <p className="mb-1 label-caps-accent-blue">
                                 {question.questionCategory}
                             </p>
                         )}
-                        <p className="mb-6 text-gray-700 dark:text-gray-300">
+                        <p className="mb-6 text-secondary">
                             {question?.questionPrompt ?? "Waiting for a question..."}
                         </p>
 
-                        <h2 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">
+                        <h2 className="mb-2 text-lg heading">
                             Answer
                         </h2>
-                        <p className="text-gray-700 dark:text-gray-300">
+                        <p className="text-secondary">
                             {question?.questionAnswer ?? "—"}
                         </p>
 
                         {roundQuestions.length > 0 && (
                             <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/50">
-                                <h3 className="mb-2 text-sm font-bold uppercase text-gray-500 dark:text-gray-400">
+                                <h3 className="mb-2 label-caps-muted">
                                     {roundLabel ? `${roundLabel} Categories` : "Round Categories"}
                                 </h3>
                                 <ul className="flex flex-col gap-1">
@@ -491,8 +491,8 @@ export default function HostGame() {
                                             key={q.questionId}
                                             className={`text-sm ${
                                                 q.questionId === question?.questionId
-                                                    ? "font-bold text-gray-900 dark:text-white"
-                                                    : "text-gray-600 dark:text-gray-300"
+                                                    ? "heading"
+                                                    : "text-muted"
                                             }`}
                                         >
                                             {q.questionCategory ?? "Uncategorized"}
@@ -509,21 +509,21 @@ export default function HostGame() {
                         {isRevealed ? (
                             <button
                                 disabled
-                                className="flex-1 cursor-default rounded-lg bg-gray-100 px-4 py-3 text-sm font-bold text-gray-400 dark:bg-gray-800 dark:text-gray-500"
+                                className="flex-1 btn-disabled px-4 py-3 text-sm"
                             >
                                 Answer Revealed
                             </button>
                         ) : isReviewing ? (
                             <button
                                 onClick={revealAnswer}
-                                className="flex-1 rounded-lg bg-purple-600 px-4 py-3 text-sm font-bold text-white hover:bg-purple-700"
+                                className="flex-1 btn-purple px-4 py-3 text-sm"
                             >
                                 Reveal Answer
                             </button>
                         ) : (
                             <button
                                 onClick={stopAccepting}
-                                className="flex-1 rounded-lg bg-gray-800 px-4 py-3 text-sm font-bold text-white hover:bg-gray-700"
+                                className="flex-1 btn-dark px-4 py-3 text-sm"
                             >
                                 Stop Incoming Answers
                             </button>
@@ -532,7 +532,7 @@ export default function HostGame() {
                             <button
                                 onClick={endGame}
                                 disabled={!isRevealed}
-                                className="flex-1 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600"
+                                className="flex-1 btn-success px-4 py-3 text-sm"
                             >
                                 End Game
                             </button>
@@ -540,7 +540,7 @@ export default function HostGame() {
                             <button
                                 onClick={nextQuestion}
                                 disabled={!isRevealed}
-                                className="flex-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-600"
+                                className="flex-1 btn-primary px-4 py-3 text-sm disabled:cursor-not-allowed disabled:hover:bg-blue-600"
                             >
                                 Next Question
                             </button>
@@ -549,13 +549,13 @@ export default function HostGame() {
                 </div>
 
                 <div className="flex min-h-0 flex-col gap-6 lg:min-w-0 lg:flex-1">
-                    <div className="flex flex-1 min-h-0 flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
+                    <div className="flex flex-1 min-h-0 flex-col card p-6">
+                        <h2 className="mb-4 text-lg heading">
                             Incoming Responses
                         </h2>
 
                         {responses.length === 0 ? (
-                            <p className="text-sm text-gray-400">No responses yet.</p>
+                            <p className="text-hint">No responses yet.</p>
                         ) : (
                             <ul className="flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto">
                                 {responses.map((response) => (

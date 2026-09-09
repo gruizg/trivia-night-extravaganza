@@ -10,13 +10,13 @@ function HalftimeRow({ response, onMarkHalftime }) {
     const [correctCount, setCorrectCount] = useState(0);
 
     return (
-        <li className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <li className="card-compact p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-subtle">
                         Team {team.teamNumber ?? "?"}{team.teamName ? ` · ${team.teamName}` : ""}
                     </p>
-                    <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    <p className="text-lg text-emphasis">
                         {response.responseAnswer}
                     </p>
                 </div>
@@ -26,29 +26,29 @@ function HalftimeRow({ response, onMarkHalftime }) {
                         <button
                             type="button"
                             onClick={() => setCorrectCount((c) => Math.max(0, c - 1))}
-                            className="px-3 py-1.5 text-lg font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            className="btn-ghost px-3 py-1.5 text-lg"
                             aria-label="Decrease correct count"
                         >
                             −
                         </button>
-                        <span className="min-w-[6rem] text-center text-sm font-bold text-gray-900 dark:text-white">
+                        <span className="min-w-[6rem] text-center text-sm heading">
                             {correctCount} correct
                         </span>
                         <button
                             type="button"
                             onClick={() => setCorrectCount((c) => c + 1)}
-                            className="px-3 py-1.5 text-lg font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            className="btn-ghost px-3 py-1.5 text-lg"
                             aria-label="Increase correct count"
                         >
                             +
                         </button>
                     </div>
-                    <p className="whitespace-nowrap text-xs text-gray-400">
+                    <p className="whitespace-nowrap text-xs text-muted-light">
                         {correctCount * 2} pts
                     </p>
                     <button
                         onClick={() => onMarkHalftime(response, correctCount)}
-                        className="rounded bg-blue-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-blue-700"
+                        className="btn-primary px-3 py-1.5 text-sm"
                     >
                         Submit
                     </button>
@@ -67,17 +67,17 @@ export default function ResponseRow({ response, onMark, onMarkHalftime, isHalfti
     const isGraded = response.responseStatus !== "PENDING";
 
     return (
-        <li className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <li className="card-compact p-4">
             <div className="flex items-center justify-between gap-3">
                 <div>
-                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-subtle">
                         Team {team.teamNumber ?? "?"}{team.teamName ? ` · ${team.teamName}` : ""}
                     </p>
-                    <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    <p className="text-lg text-emphasis">
                         {response.responseAnswer}
                     </p>
                     {response.responseWager !== undefined && response.responseWager !== null && (
-                        <p className="text-xs text-gray-400">Wager: {response.responseWager}</p>
+                        <p className="text-xs text-muted-light">Wager: {response.responseWager}</p>
                     )}
                 </div>
 
@@ -86,8 +86,8 @@ export default function ResponseRow({ response, onMark, onMarkHalftime, isHalfti
                         onClick={() => onMark(response, "CORRECT")}
                         className={`rounded px-3 py-1 text-sm font-bold ${
                             isGraded && response.responseStatus === "CORRECT"
-                                ? "bg-green-600 text-white"
-                                : "bg-green-100 text-green-700 hover:bg-green-200"
+                                ? "toggle-success-active"
+                                : "toggle-success"
                         }`}
                     >
                         Correct
@@ -96,8 +96,8 @@ export default function ResponseRow({ response, onMark, onMarkHalftime, isHalfti
                         onClick={() => onMark(response, "INCORRECT")}
                         className={`rounded px-3 py-1 text-sm font-bold ${
                             isGraded && response.responseStatus === "INCORRECT"
-                                ? "bg-red-600 text-white"
-                                : "bg-red-100 text-red-700 hover:bg-red-200"
+                                ? "toggle-error-active"
+                                : "toggle-error"
                         }`}
                     >
                         Incorrect

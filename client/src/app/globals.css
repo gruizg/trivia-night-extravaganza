@@ -45,6 +45,193 @@ body {
     @apply bg-slate-900 text-white hover:bg-slate-800 hover:text-white
     dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200;
   }
+
+  /* ---------------------------------------------------------------
+   * Shared styling primitives.
+   *
+   * These pull together the colors, font sizing/weight, and border
+   * thickness/radius that show up identically across many components,
+   * so a palette or type tweak can happen in one place. Sizing and
+   * layout (padding, margin, width/height, flex/grid) intentionally
+   * stay as Tailwind utility classes at each call site instead of
+   * being baked in here, since those vary per usage and are exactly
+   * what a component needs to keep controlling directly.
+   * --------------------------------------------------------------- */
+
+  /* Surfaces */
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm dark:border-[#ff1493] dark:bg-gray-900;
+  }
+  .card-compact {
+    @apply rounded-lg border border-gray-200 bg-white shadow-sm dark:border-[#ff1493] dark:bg-gray-900;
+  }
+  .list-row {
+    @apply rounded-lg border border-gray-200 dark:border-[#ff1493];
+  }
+
+  /* Headings */
+  .heading {
+    @apply font-bold text-gray-900 dark:text-pink-600;
+  }
+  .heading-semibold {
+    @apply font-semibold text-gray-900 dark:text-white;
+  }
+  .heading-black {
+    @apply font-black text-gray-900 dark:text-white;
+  }
+  .text-emphasis {
+    @apply font-medium text-gray-900 dark:text-white;
+  }
+  .heading-brand {
+    @apply font-bold text-gray-900 dark:text-[#ff1493];
+  }
+
+  /* Body / muted text */
+  .text-body {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+  .text-secondary {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+  .text-muted {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+  .text-subtle {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+  .text-dim {
+    @apply text-gray-500;
+  }
+  .text-muted-light {
+    @apply text-gray-400;
+  }
+  .text-hint {
+    @apply text-sm text-gray-400;
+  }
+  .text-accent {
+    @apply text-[var(--tn-pink)];
+  }
+  .text-accent-bold {
+    @apply font-bold text-[var(--tn-pink)];
+  }
+
+  /* Field / eyebrow labels */
+  .field-label {
+    @apply text-sm font-semibold text-gray-700 dark:text-gray-300;
+  }
+  .label-caps {
+    @apply text-sm font-bold uppercase text-gray-400;
+  }
+  .label-caps-sm {
+    @apply text-xs font-bold uppercase text-gray-500;
+  }
+  .label-caps-accent {
+    @apply text-sm font-bold uppercase tracking-wide text-[var(--tn-pink)];
+  }
+  .label-caps-accent-blue {
+    @apply text-sm font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400;
+  }
+  .label-caps-muted {
+    @apply text-sm font-bold uppercase text-gray-500 dark:text-gray-400;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply rounded-lg bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply rounded bg-gray-100 font-bold text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300;
+  }
+  .btn-ghost {
+    @apply font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800;
+  }
+  .btn-link {
+    @apply font-bold text-[var(--tn-pink)] hover:underline;
+  }
+  .btn-purple {
+    @apply rounded-lg bg-purple-600 font-bold text-white hover:bg-purple-700;
+  }
+  .btn-dark {
+    @apply rounded-lg bg-gray-800 font-bold text-white hover:bg-gray-700;
+  }
+  .btn-success {
+    @apply rounded-lg bg-emerald-600 font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600;
+  }
+  .btn-disabled {
+    @apply cursor-default rounded-lg bg-gray-100 font-bold text-gray-400 dark:bg-gray-800 dark:text-gray-500;
+  }
+  .btn-outline {
+    @apply rounded-lg border border-gray-300 font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800;
+  }
+
+  /* Badges / status pills */
+  .badge {
+    @apply inline-block rounded text-xs font-bold;
+  }
+  .badge-neutral {
+    @apply bg-gray-100 text-gray-500;
+  }
+  .badge-success {
+    @apply bg-green-100 text-green-700;
+  }
+  .badge-error {
+    @apply bg-red-100 text-red-700;
+  }
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-700;
+  }
+
+  /* Round-label pills (rounded-full, distinct from the badges above) */
+  .badge-round {
+    @apply inline-block rounded-full text-xs font-bold uppercase;
+  }
+  .badge-round-amber {
+    @apply bg-amber-100 text-amber-700;
+  }
+  .badge-round-purple {
+    @apply bg-purple-100 text-purple-700;
+  }
+  .badge-round-neutral {
+    @apply bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400;
+  }
+
+  /* Inputs */
+  .input-field {
+    @apply rounded-lg border border-gray-300 text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white;
+  }
+
+  /* Two-state grading toggles (unselected vs. selected) */
+  .toggle-success {
+    @apply bg-green-100 text-green-700 hover:bg-green-200;
+  }
+  .toggle-success-active {
+    @apply bg-green-600 text-white;
+  }
+  .toggle-error {
+    @apply bg-red-100 text-red-700 hover:bg-red-200;
+  }
+  .toggle-error-active {
+    @apply bg-red-600 text-white;
+  }
+  .rank-row {
+    @apply border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900;
+  }
+  .rank-row-highlight {
+    @apply border-blue-500 bg-blue-50 ring-2 ring-blue-500 dark:border-blue-400 dark:bg-blue-950;
+  }
+  .rank-number {
+    @apply text-gray-400;
+  }
+  .rank-number-first {
+    @apply text-amber-500;
+  }
+
+  .text-error {
+    @apply text-red-600;
+  }
+  .alert-error {
+    @apply rounded bg-red-100 text-sm text-red-700;
+  }
 }
 /*@layer base {*/
 /*  div {*/

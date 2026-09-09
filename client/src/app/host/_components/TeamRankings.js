@@ -10,27 +10,27 @@ export default function TeamRankings({ teams }) {
     });
 
     return (
-        <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-            <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
+        <div className="flex h-full min-h-0 flex-col card p-6">
+            <h2 className="mb-4 text-lg heading">
                 Team Rankings
             </h2>
 
             {ranked.length === 0 ? (
-                <p className="text-sm text-gray-400">No teams yet.</p>
+                <p className="text-hint">No teams yet.</p>
             ) : (
                 <ul className="flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto">
                     {ranked.map((team, index) => (
                         <li
                             key={team.teamId}
-                            className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-3 text-sm dark:border-gray-800"
+                            className="flex items-center justify-between gap-3 list-row p-3 text-sm"
                         >
                             <div className="flex items-center gap-3">
-                                <span className="font-bold text-gray-400">#{index + 1}:</span>
-                                <span className="font-medium text-gray-900 dark:text-white">
+                                <span className="font-bold text-muted-light">#{index + 1}:</span>
+                                <span className="text-emphasis">
                                     {team.teamName}(#{team.teamNumber})
                                 </span>
                             </div>
-                            <span className="font-bold text-gray-900 dark:text-white">
+                            <span className="heading">
                                 {team.score}
                             </span>
                         </li>

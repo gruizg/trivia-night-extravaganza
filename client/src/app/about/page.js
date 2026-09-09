@@ -1,14 +1,14 @@
 export default function About() {
     return (
         <div className="marketing-page page-container overflow-y-auto">
-            <p className="text-sm font-bold uppercase tracking-wide text-[var(--tn-pink)]">
+            <p className="label-caps-accent">
                 The origin story
             </p>
-            <h1 className="mt-2 text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+            <h1 className="mt-2 text-3xl heading sm:text-4xl">
                 It started at a bar, over Dragon Ball trivia
             </h1>
 
-            <div className="mt-6 max-w-2xl space-y-5 text-gray-700 dark:text-gray-300">
+            <div className="mt-6 max-w-2xl space-y-5 text-secondary">
                 <p>
                     This whole thing came out of some genuinely great nights: geek trivia
                     with friends and family, where the questions were about the things we

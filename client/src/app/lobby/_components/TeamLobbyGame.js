@@ -85,38 +85,38 @@ function JoinForm() {
         <div className="flex h-full items-center justify-center">
             <form
                 onSubmit={handleSubmit}
-                className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                className="flex w-full max-w-sm flex-col gap-4 card p-8"
             >
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Join a Game</h1>
+                <h1 className="text-2xl heading">Join a Game</h1>
 
-                <label className="flex flex-col gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label className="flex flex-col gap-1 field-label">
                     Game Code
                     <input
                         value={gameCode}
                         onChange={(e) => setGameCode(e.target.value)}
                         required
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-lg uppercase tracking-widest text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        className="input-field px-3 py-2 text-lg uppercase tracking-widest"
                         placeholder="ABCD"
                     />
                 </label>
 
-                <label className="flex flex-col gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label className="flex flex-col gap-1 field-label">
                     Team Name
                     <input
                         value={teamName}
                         onChange={(e) => setTeamName(e.target.value)}
                         required
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        className="input-field px-3 py-2"
                         placeholder="The Trivia Titans"
                     />
                 </label>
 
-                {error && <p className="text-sm text-red-600">{error}</p>}
+                {error && <p className="text-sm text-error">{error}</p>}
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-60"
+                    className="btn-primary px-4 py-3 text-sm"
                 >
                     {loading ? "Joining..." : "Join Game"}
                 </button>
@@ -211,52 +211,52 @@ function WaitingRoom({ gameId, teamId }) {
             <h1 className="mb-4 text-2xl font-bold">Lobby</h1>
 
             {error && (
-                <p className="mb-4 rounded bg-red-100 px-4 py-2 text-sm text-red-700">{error}</p>
+                <p className="mb-4 alert-error px-4 py-2">{error}</p>
             )}
 
             <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Theme info + status */}
                 <div className="flex flex-col gap-6">
-                    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <h2 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">
+                    <div className="card p-6">
+                        <h2 className="mb-2 text-lg heading">
                             Theme Info
                         </h2>
                         {theme ? (
                             <>
-                                <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                                <p className="text-xl heading-semibold">
                                     {theme.themeTitle}
                                 </p>
-                                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                                <p className="mt-1 text-sm text-muted">
                                     {theme.themeDescription}
                                 </p>
                             </>
                         ) : (
-                            <p className="text-sm text-gray-400">Loading theme...</p>
+                            <p className="text-hint">Loading theme...</p>
                         )}
                     </div>
 
-                    <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <p className="mb-2 text-sm font-bold uppercase text-gray-400">
+                    <div className="flex flex-1 flex-col items-center justify-center card p-6">
+                        <p className="mb-2 label-caps">
                             {myTeam ? "You're in as" : "Joining as"}
                         </p>
-                        <p className="text-3xl font-black text-gray-900 dark:text-white">
+                        <p className="text-3xl heading-black">
                             {myTeam?.teamName ?? "..."}
                         </p>
 
-                        <p className="mt-6 text-sm font-semibold text-gray-500">
+                        <p className="mt-6 text-sm text-subtle">
                             Waiting for the host to start...
                         </p>
                     </div>
                 </div>
 
                 {/* Other teams in the lobby */}
-                <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
+                <div className="flex h-full flex-col card p-6">
+                    <h2 className="mb-4 text-lg heading">
                         Teams in this Game
                     </h2>
 
                     {teams.length === 0 ? (
-                        <p className="text-sm text-gray-400">No teams have joined yet.</p>
+                        <p className="text-hint">No teams have joined yet.</p>
                     ) : (
                         <ul className="flex flex-col gap-3 overflow-y-auto">
                             {teams.map((team, index) => (
