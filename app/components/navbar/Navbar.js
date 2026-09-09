@@ -60,15 +60,13 @@ export default function Navbar() {
                 </div>
 
                 {/* Mobile/Tablet Hamburger Button - Visible on screens below `lg` */}
-                <button
-                    type="button"
+                <div
                     onClick={handleNav}
                     className="lg:hidden cursor-pointer p-2 rounded-lg text-gray-900 hover:bg-gray-200"
                     aria-label="Toggle Navigation Menu"
-                    aria-expanded={menuOpen}
                 >
                     <FaBars size={25} />
-                </button>
+                </div>
             </div>
 
             {/* Mobile/Tablet Drawer Overlay */}
