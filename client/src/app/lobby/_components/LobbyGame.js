@@ -17,6 +17,12 @@ export default function LobbyGame() {
     const [teams, setTeams] = useState([]);
     const [error, setError] = useState(null);
     const [starting, setStarting] = useState(false);
+    const [locking, setLocking] = useState(false);
+
+    // LOBBY is the only status the backend accepts new team joins under, so
+    // flipping to INTRO closes the lobby to late joiners without yet moving
+    // into the first question the way "Start Game" does.
+    const isAcceptingTeams = game?.gameStatus === "LOBBY";
 
     const loadGame = useCallback(async () => {
         if (!gameId) return;
@@ -115,6 +121,27 @@ export default function LobbyGame() {
         }
     }
 
+    async function stopIncomingTeams() {
+        if (!game || locking || !isAcceptingTeams) return;
+        setLocking(true);
+        setError(null);
+
+        try {
+            const res = await fetch(`${API_URL}/game/${gameId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...game, gameStatus: "INTRO" }),
+            });
+
+            if (!res.ok) throw new Error("Could not stop incoming teams.");
+            setGame(await res.json());
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLocking(false);
+        }
+    }
+
     if (!gameId) {
         return (
             <div>
@@ -173,14 +200,33 @@ export default function LobbyGame() {
                                 Waiting for at least one team to join...
                             </p>
                         )}
+
+                        <button
+                            onClick={stopIncomingTeams}
+                            disabled={!isAcceptingTeams || locking}
+                            className="mt-3 rounded-lg border border-gray-300 px-6 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        >
+                            {isAcceptingTeams
+                                ? locking
+                                    ? "Locking lobby..."
+                                    : "Stop Incoming Teams"
+                                : "Lobby Locked"}
+                        </button>
                     </div>
                 </div>
 
                 {/* Incoming teams */}
                 <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
-                        Incoming Teams
-                    </h2>
+                    <div className="mb-4 flex items-center justify-between">
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                            Incoming Teams
+                        </h2>
+                        {!isAcceptingTeams && (
+                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                Not accepting new teams
+                            </span>
+                        )}
+                    </div>
 
                     {teams.length === 0 ? (
                         <p className="text-sm text-gray-400">No teams have joined yet.</p>
