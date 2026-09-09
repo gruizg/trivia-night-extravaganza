@@ -3,6 +3,7 @@ package learn.trivia.domain;
 import learn.trivia.data.doubles.GameRepositoryDouble;
 import learn.trivia.data.doubles.TeamRepositoryDouble;
 import learn.trivia.models.*;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class TeamServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new TeamService(new TeamRepositoryDouble(), new GameRepositoryDouble());
+        service = new TeamService(new TeamRepositoryDouble(), new GameRepositoryDouble(), new GameEventBroadcaster());
     }
 
     @Nested
