@@ -2,72 +2,61 @@ import Link from "next/link";
 
 export default function Home() {
     return (
-        <div className="marketing-page page-container overflow-y-auto p-0">
-            {/* Hero */}
-            <section className="rounded-t-[10px] bg-[var(--tn-ink)] px-6 py-16 sm:px-12 sm:py-20">
-                <p className="text-sm font-bold uppercase tracking-wide text-[var(--tn-gold)]">
-                    Six rounds. One crown.
-                </p>
-                <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight text-[var(--tn-cream)] sm:text-6xl">
+        <div className="page-container flex flex-col justify-between overflow-hidden p-6 sm:p-10">
+            {/* Hero Section */}
+            <section className="p-8 sm:p-12 flex flex-col items-start justify-center">
+                <span className="label-caps-accent mb-2">Six rounds. One crown.</span>
+                <h1 className="heading text-4xl sm:text-6xl mb-4">
                     Trivia Night Extravaganza
                 </h1>
-                <p className="mt-6 max-w-xl text-lg text-[var(--tn-cream)]/80">
+                <p className="text-secondary text-base sm:text-lg max-w-2xl mb-8">
                     Are you the biggest brainiac in the room? Do you have the instincts of a
                     knowledgeable ninja? Gather your friends and family and find out who
                     really knows it all — and who's just been faking it since round two.
                 </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                    <Link
-                        href="/themes"
-                        className="rounded-lg bg-[var(--tn-gold)] px-6 py-3 text-sm font-bold text-[var(--tn-ink)] hover:brightness-95"
-                    >
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-4 w-full sm:w-auto">
+                    <Link href="/themes" className="btn-primary px-8 py-3 text-lg">
                         Host a Game
                     </Link>
-                    <Link
-                        href="/lobby"
-                        className="rounded-lg border border-[var(--tn-cream)]/30 px-6 py-3 text-sm font-bold text-[var(--tn-cream)] hover:bg-[var(--tn-cream)]/10"
-                    >
+                    <Link href="/lobby" className="btn-secondary px-8 py-3 text-lg">
                         Join a Game
                     </Link>
                 </div>
             </section>
 
-            {/* How a night works */}
-            <section className="px-6 py-12 sm:px-12">
-                <h2 className="text-2xl heading">
-                    How a night works
-                </h2>
-                <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
-                    <div>
-                        <p className="text-sm text-accent-bold">1. Pick a theme</p>
-                        <p className="mt-1 text-sm text-muted">
-                            From anime marathons to hometown history — grab one from the Themes
-                            page.
+            {/* How It Works Section */}
+            <section className="py-4">
+                <h2 className="heading text-xl mb-4">How a night works</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="p-4">
+                        <p className="label-caps-accent mb-1">1. Pick a theme</p>
+                        <p className="text-muted text-sm">
+                            From anime marathons to hometown history — grab one from the Themes page.
                         </p>
                     </div>
-                    <div>
-                        <p className="text-sm text-accent-bold">2. Gather your crew</p>
-                        <p className="mt-1 text-sm text-muted">
-                            Share the game code, form teams, and let the trash talk begin
-                            before the first question even loads.
+                    <div className="p-4">
+                        <p className="label-caps-accent mb-1">2. Gather your crew</p>
+                        <p className="text-muted text-sm">
+                            Share the game code, form teams, and let the trash talk begin early.
                         </p>
                     </div>
-                    <div>
-                        <p className="text-sm text-accent-bold">3. Battle for the crown</p>
-                        <p className="mt-1 text-sm text-muted">
-                            Twenty questions, wagers on the line. Highest
-                            score at the end takes the title.
+                    <div className="p-4">
+                        <p className="label-caps-accent mb-1">3. Battle for the crown</p>
+                        <p className="text-muted text-sm">
+                            Twenty questions, wagers on the line. Highest score takes the title.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* Teaser strip */}
-            <section className="flex flex-col gap-4 border-t border-gray-200 px-6 py-8 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between sm:px-12">
-                <p className="text-sm text-muted">
+            {/* Teaser Footer Strip */}
+            <section className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200 dark:border-[#ff1493]">
+                <p className="text-muted text-sm">
                     Curious where this whole thing came from?
                 </p>
-                <div className="flex gap-4 text-sm font-bold">
+                <div className="flex gap-6 text-sm">
                     <Link href="/about" className="btn-link">
                         Read the origin story
                     </Link>
