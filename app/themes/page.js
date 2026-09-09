@@ -15,8 +15,8 @@ export default async function Themes() {
     return (
 
         <div className={"page-container"}>
-            <h1 className={"mt-2 text-3xl heading-brand sm:text-4xl"}>Themes</h1>
-            <ul className={"p-2 space-y-4"}>
+            <h1>Themes</h1>
+            <ul>
                 {themes.map((theme) => (
                     <ThemeCard key={theme.themeId} theme={theme}></ThemeCard>
                 ))}
