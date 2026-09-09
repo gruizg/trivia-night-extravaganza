@@ -1,0 +1,53 @@
+@url = http://localhost:8080/api/response
+
+GET {{url}}/1 HTTP/1.1
+
+###
+
+GET{{url}}/question/2/1 HTTP/1.1
+
+###
+
+GET{{url}}/team/2
+
+###
+
+GET{{url}}/wagers/2/1 HTTP/1.1
+
+###
+
+POST {{url}}
+Content-Type: application/json
+
+{
+  "responseAnswer": "Mitochondria",
+  "responseWager": 3,
+  "team": { "teamId": 2 },
+  "question": { "questionId": 2 }
+}
+
+###
+
+POST {{url}}
+Content-Type: application/json
+
+{
+  "responseAnswer": "Mitochondria",
+  "responseWager": 15,
+  "team": { "teamId": 2 },
+  "question": { "questionId": 20 }
+}
+
+###
+
+PUT {{url}}/1
+Content-Type: application/json
+
+{
+  "responseId": 1,
+  "responseAnswer": "answer",
+  "responseWager": 1,
+  "responseCorrect": true,
+  "team": { "teamId": 2 },
+  "question": { "questionId": 1 }
+}

@@ -2,6 +2,9 @@ package learn.trivia.domain;
 
 public enum ResultType {
 
-    //TODO: IMPLEMENT
+    SUCCESS,
+    INVALID,
+    NOT_FOUND,
+    ERROR;
 
 }

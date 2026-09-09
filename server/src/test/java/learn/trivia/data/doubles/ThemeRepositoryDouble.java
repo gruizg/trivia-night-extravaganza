@@ -1,17 +1,31 @@
 package learn.trivia.data.doubles;
 
 import learn.trivia.data.ThemeRepository;
-import learn.trivia.models.Theme;
+import learn.trivia.models.*;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static learn.trivia.TestDataHelpers.Models.*;
 
 public class ThemeRepositoryDouble implements ThemeRepository {
 
     ArrayList<Theme> themes = new ArrayList<>();
 
     public ThemeRepositoryDouble() {
+        themes.add(makeExistingTheme());
+        themes.add(new Theme(2, "title 2", "description 2", makeExistingUser()));
+    }
+
+    @Override
+    public Theme findById(int themeId) {
+        return themes.stream().filter(theme -> theme.getThemeId() == themeId).findFirst().orElse(null);
+    }
+
+    @Override
+    public List<Theme> findAll() {
+        return new ArrayList<>(themes);
     }
 
     //TODO: IMPLEMENT DOUBLE
-
 }
