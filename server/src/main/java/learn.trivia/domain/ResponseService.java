@@ -139,6 +139,50 @@ public class ResponseService {
 
     }
 
+    // Teams can only request an amendment on a response the host has
+    // already marked incorrect. This intentionally goes through its own
+    // narrow method (backing the /amend DTO endpoint) rather than the
+    // general-purpose `update`, so a team can never smuggle a status,
+    // points, or answer change in alongside their reason text.
+    public Result<AmendedResponseDto> requestAmend(int responseId, String reason) {
+        Result<AmendedResponseDto> result = new Result<>();
+
+        if (reason == null || reason.isBlank()) {
+            result.addMessage("A reason is required to request an amendment", ResultType.INVALID);
+            return result;
+        }
+
+        Response existing = responseRepository.findById(responseId);
+        if (existing == null) {
+            result.addMessage("Response not found", ResultType.NOT_FOUND);
+            return result;
+        }
+
+        if (existing.getResponseStatus() != ResponseStatus.INCORRECT) {
+            result.addMessage("Only a response marked incorrect can have an amendment requested", ResultType.INVALID);
+            return result;
+        }
+
+        // The only change that ever touches the entity itself is the status
+        // flip to AMEND, so the frontend can key off it. The reason text
+        // never lands on the entity - it's carried alongside it in
+        // AmendedResponseDto, which is never persisted (findById can't
+        // restore it). This one in-memory DTO is the only place the reason
+        // exists - it goes out on this broadcast for the host to see live,
+        // and then it's gone.
+        existing.setResponseStatus(ResponseStatus.AMEND);
+
+        if (!responseRepository.update(existing)) {
+            result.addMessage("Unable to request an amendment", ResultType.ERROR);
+            return result;
+        }
+
+        AmendedResponseDto payload = new AmendedResponseDto(existing, reason.trim());
+        result.setPayload(payload);
+        broadcaster.broadcast(existing.getTeam().getGame().getGameId(), "response", payload);
+        return result;
+    }
+
     public Result<Response> update(Response response) {
         Result<Response> result = new Result<>();
 
@@ -199,8 +243,6 @@ public class ResponseService {
 
         if (responseRepository.update(response)) {
             result.setPayload(response);
-            // Re-fetch fully joined so subscribers get complete team/question
-            // data, rather than whatever partial shape the client PUT in.
             Response updated = responseRepository.findById(response.getResponseId());
             broadcaster.broadcast(team.getGame().getGameId(), "response", updated);
             return result;

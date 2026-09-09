@@ -1,5 +1,6 @@
 package learn.trivia.controllers;
 
+import learn.trivia.domain.AmendedResponseDto;
 import learn.trivia.domain.ResponseService;
 import learn.trivia.domain.Result;
 import learn.trivia.models.Response;
@@ -68,4 +69,15 @@ public class ResponseController {
         return ErrorResponse.build(result);
     }
 
+    @PutMapping("/{id}/amend")
+    public ResponseEntity<Object> requestAmend(@PathVariable int id, @RequestBody AmendRequestDto dto) {
+        Result<AmendedResponseDto> result = service.requestAmend(id, dto.responseAmendReason());
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result.getPayload());
+        }
+
+        return ErrorResponse.build(result);
+    }
+
 }
+

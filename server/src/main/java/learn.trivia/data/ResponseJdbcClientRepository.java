@@ -21,16 +21,18 @@ public class ResponseJdbcClientRepository implements ResponseRepository {
     private final String SELECT = """
                 select r.response_id, r.response_answer, r.response_wager, r.response_status, r.response_points,
                        t.team_id, t.team_token, t.team_number, t.team_name,
-                       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
+                       rq.question_id as rq_question_id, rq.question_category as rq_question_category, rq.question_prompt as rq_question_prompt, rq.question_answer as rq_question_answer, rq.question_type as rq_question_type, rq.question_round as rq_question_round, rq.question_order as rq_question_order,
                        g.game_id, g.game_code, g.host_token, g.game_status, g.current_round, g.current_question_id,
+                       q.question_id, q.question_category, q.question_prompt, q.question_answer, q.question_type, q.question_round, q.question_order,
                        th.theme_id, th.theme_title, th.theme_description,
                        u.user_id, u.username, u.email, u.password
             
                 from response r
                     left join team t on r.team_id = t.team_id
-                    left join question q on r.question_id = q.question_id
+                    left join question rq on r.question_id = rq.question_id
                     left join game g on t.game_id = g.game_id
                     left join theme th on g.theme_id = th.theme_id
+                    left join question q on g.current_question_id = q.question_id and th.theme_id = q.theme_id
                     left join user u on th.user_id = u.user_id
             """;
 

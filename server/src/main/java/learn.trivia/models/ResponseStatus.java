@@ -4,7 +4,8 @@ public enum ResponseStatus {
 
     CORRECT("correct"),
     INCORRECT("incorrect"),
-    PENDING("pending");
+    PENDING("pending"),
+    AMEND("amend");
 
     private final String name;
 
