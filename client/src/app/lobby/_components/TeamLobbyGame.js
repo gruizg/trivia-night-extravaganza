@@ -4,9 +4,27 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TeamRow from "@/app/lobby/_components/TeamRow";
 import TeamGameView from "@/app/lobby/_components/TeamGameView";
+import FinalRankings from "@/app/components/FinalRankings";
 import useGameEvents from "@/app/hooks/useGameEvents";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// Pulls the real message out of a failed response instead of guessing at
+// why it failed. Falls back to a generic message only if the server didn't
+// send anything usable.
+async function extractErrorMessage(res, fallback) {
+    try {
+        const contentType = res.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+            const data = await res.json();
+            return data?.message || data?.error || fallback;
+        }
+        const text = await res.text();
+        return text.trim() || fallback;
+    } catch {
+        return fallback;
+    }
+}
 
 export default function TeamLobbyGame() {
     const router = useRouter();
@@ -37,7 +55,9 @@ function JoinForm() {
 
         try {
             const gameRes = await fetch(`${API_URL}/game/code/${gameCode.trim()}`);
-            if (!gameRes.ok) throw new Error("No game found with that code.");
+            if (!gameRes.ok) {
+                throw new Error(await extractErrorMessage(gameRes, "No game found with that code."));
+            }
             const game = await gameRes.json();
 
             const teamRes = await fetch(`${API_URL}/team`, {
@@ -49,7 +69,9 @@ function JoinForm() {
                 }),
             });
 
-            if (!teamRes.ok) throw new Error("Could not join the game. Try a different team name.");
+            if (!teamRes.ok) {
+                throw new Error(await extractErrorMessage(teamRes, "Could not join the game."));
+            }
             const team = await teamRes.json();
 
             router.push(`/lobby?gameId=${game.gameId}&teamId=${team.teamId}`);
@@ -118,9 +140,11 @@ function WaitingRoom({ gameId, teamId }) {
             if (!res.ok) throw new Error("Game not found");
             const gameData = await res.json();
 
-            // A game is in its lobby until the host starts it, at which
-            // point gameStatus moves off LOBBY (to QUESTION, REVIEW, etc.).
-            setStarted(gameData.gameStatus !== "LOBBY");
+            // A game is in its lobby until the host actually starts it.
+            // INTRO just means the host has stopped accepting new teams -
+            // the game hasn't moved into a question yet, so it isn't
+            // "started" until gameStatus moves past LOBBY/INTRO too.
+            setStarted(gameData.gameStatus !== "LOBBY" && gameData.gameStatus !== "INTRO");
             setGame(gameData);
 
             if (gameData.theme?.themeId) {
@@ -161,10 +185,20 @@ function WaitingRoom({ gameId, teamId }) {
         team: () => loadTeams(),
     });
 
+    // The host puts the game into "ENDED" once the FINAL question is
+    // revealed and they click "End Game" - checked ahead of the
+    // in-progress view below since currentQuestion (the final question)
+    // is still set at that point, which would otherwise route here into
+    // TeamGameView instead.
+    if (game?.gameStatus === "ENDED") {
+        return <FinalRankings gameId={gameId} highlightTeamId={teamId} />;
+    }
+
     if (started && game?.currentQuestion?.questionId) {
         return (
             <TeamGameView
                 teamId={teamId}
+                gameId={gameId}
                 questionId={game.currentQuestion.questionId}
                 gameStatus={game.gameStatus}
                 myTeam={myTeam}

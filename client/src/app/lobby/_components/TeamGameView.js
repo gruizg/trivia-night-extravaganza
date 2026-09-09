@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react";
+import useGameEvents from "@/app/hooks/useGameEvents";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -43,6 +44,13 @@ function Verdict({ response, showVerdict }) {
             </span>
         );
     }
+    if (response.responseStatus === "AMEND") {
+        return (
+            <span className="inline-block rounded bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-700">
+                Amendment Requested
+            </span>
+        );
+    }
     return (
         <span className="inline-block rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
             Pending
@@ -50,7 +58,7 @@ function Verdict({ response, showVerdict }) {
     );
 }
 
-export default function TeamGameView({ teamId, questionId, gameStatus, myTeam }) {
+export default function TeamGameView({ teamId, gameId, questionId, gameStatus, myTeam }) {
     const [question, setQuestion] = useState(null);
     const [wagers, setWagers] = useState([]);
     const [responses, setResponses] = useState([]);
@@ -60,9 +68,25 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Amendment request state: which past response's form is open, and
+    // that form's own reason text/submit state, kept separate from the
+    // current-question answer form above.
+    const [amendingId, setAmendingId] = useState(null);
+    const [amendReason, setAmendReason] = useState("");
+    const [amendSubmitting, setAmendSubmitting] = useState(false);
+    const [amendError, setAmendError] = useState(null);
+
     const questionType = (question?.questionType ?? "").toUpperCase();
     const isHalftime = questionType === HALFTIME;
     const isFinal = questionType === FINAL;
+
+    const roundLabel = isHalftime
+        ? "Halftime Round"
+        : isFinal
+            ? "Final Round"
+            : question?.questionRound
+                ? `Round ${question.questionRound}`
+                : null;
 
     const answersOpen = gameStatus === "QUESTION";
     const isRevealed = gameStatus === "REVEAL";
@@ -119,6 +143,18 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
         loadQuestionAndResponses();
     }, [questionId, gameStatus, loadQuestionAndResponses]);
 
+    // Pushed whenever any response in the game is submitted, graded, or
+    // amended. Without this, a response only refreshed when questionId or
+    // gameStatus happened to change for some unrelated reason (stopping
+    // submissions, revealing, moving on) - so an amend request the host
+    // resolved on a past question wouldn't show up here until one of those
+    // unrelated things happened next. This keeps it immediate. (Verdicts
+    // for the *current* question are still gated by isRevealed below, so
+    // this doesn't leak an early grade.)
+    useGameEvents(gameId, {
+        response: () => loadQuestionAndResponses(),
+    });
+
     async function handleSubmit(e) {
         e.preventDefault();
         if (submitting) return;
@@ -149,6 +185,49 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
             setError(err.message);
         } finally {
             setSubmitting(false);
+        }
+    }
+
+    function openAmendForm(responseId) {
+        setAmendingId(responseId);
+        setAmendReason("");
+        setAmendError(null);
+    }
+
+    function closeAmendForm() {
+        setAmendingId(null);
+        setAmendReason("");
+        setAmendError(null);
+    }
+
+    async function submitAmendRequest(response) {
+        if (amendSubmitting) return;
+        setAmendSubmitting(true);
+        setAmendError(null);
+
+        try {
+            const res = await fetch(`${API_URL}/response/${response.responseId}/amend`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ responseAmendReason: amendReason.trim() }),
+            });
+
+            if (!res.ok) throw new Error(await parseErrorMessage(res));
+
+            // The backend only ever flips responseStatus to AMEND on the
+            // entity itself - the reason text comes back alongside it in a
+            // separate field, not on the entity, so it's merged back on
+            // here purely for this tab's own display.
+            const { response: updatedResponse, responseAmendReason } = await res.json();
+            const updated = { ...updatedResponse, responseAmendReason };
+            setResponses((prev) =>
+                prev.map((r) => (r.responseId === updated.responseId ? updated : r))
+            );
+            closeAmendForm();
+        } catch (err) {
+            setAmendError(err.message);
+        } finally {
+            setAmendSubmitting(false);
         }
     }
 
@@ -184,6 +263,72 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                                     {r.responseWager > 0 && (
                                         <p className="text-gray-500">Wagered: {r.responseWager}</p>
                                     )}
+
+                                    {r.responseStatus === "INCORRECT" && amendingId !== r.responseId && (
+                                        <button
+                                            onClick={() => openAmendForm(r.responseId)}
+                                            className="mt-2 text-xs font-bold text-blue-600 hover:underline"
+                                        >
+                                            Request Amendment
+                                        </button>
+                                    )}
+
+                                    {r.responseStatus === "AMEND" && r.responseAmendReason && (
+                                        <p className="mt-2 text-xs italic text-gray-500">
+                                            Your reason: "{r.responseAmendReason}"
+                                        </p>
+                                    )}
+
+                                    {amendingId === r.responseId && (
+                                        <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900 dark:bg-blue-950">
+                                            <p className="text-xs font-bold uppercase text-gray-500">
+                                                Question
+                                            </p>
+                                            <p className="text-sm text-gray-800 dark:text-gray-200">
+                                                {r.question?.questionPrompt ?? `Question ${r.question?.questionId}`}
+                                            </p>
+
+                                            <p className="mt-2 text-xs font-bold uppercase text-gray-500">
+                                                Your Answer
+                                            </p>
+                                            <p className="text-sm text-gray-800 dark:text-gray-200">
+                                                {r.responseAnswer}
+                                            </p>
+
+                                            <label className="mt-3 flex flex-col gap-1 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                                Why should this have been marked correct?
+                                                <textarea
+                                                    value={amendReason}
+                                                    onChange={(e) => setAmendReason(e.target.value)}
+                                                    required
+                                                    rows={3}
+                                                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                                    placeholder="Explain your reasoning..."
+                                                />
+                                            </label>
+
+                                            {amendError && (
+                                                <p className="mt-2 text-xs text-red-600">{amendError}</p>
+                                            )}
+
+                                            <div className="mt-3 flex gap-2">
+                                                <button
+                                                    onClick={() => submitAmendRequest(r)}
+                                                    disabled={amendSubmitting || !amendReason.trim()}
+                                                    className="rounded bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-60"
+                                                >
+                                                    {amendSubmitting ? "Sending..." : "Send Request"}
+                                                </button>
+                                                <button
+                                                    onClick={closeAmendForm}
+                                                    disabled={amendSubmitting}
+                                                    className="rounded bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -193,6 +338,19 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
 
             <div className="flex flex-col gap-4">
                 <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                    {roundLabel && (
+                        <span
+                            className={`mb-2 inline-block rounded-full px-3 py-1 text-xs font-bold uppercase ${
+                                isHalftime
+                                    ? "bg-amber-100 text-amber-700"
+                                    : isFinal
+                                        ? "bg-purple-100 text-purple-700"
+                                        : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                            }`}
+                        >
+                            {roundLabel}
+                        </span>
+                    )}
                     <p className="font-semibold text-gray-900 dark:text-white">
                         {question?.questionCategory}: {question?.questionPrompt}
                     </p>
@@ -222,6 +380,16 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                                     </p>
                                 </>
                             )}
+                            {isRevealed && (
+                                <>
+                                    <p className="text-sm font-bold uppercase text-gray-400">
+                                        Correct Answer
+                                    </p>
+                                    <p className="mb-4 text-lg text-gray-800 dark:text-gray-200">
+                                        {question?.questionAnswer ?? "—"}
+                                    </p>
+                                </>
+                            )}
                             <p className="text-sm font-semibold text-gray-500">
                                 {isRevealed
                                     ? "Waiting for the next question..."
@@ -236,6 +404,16 @@ export default function TeamGameView({ teamId, questionId, gameStatus, myTeam })
                         <div>
                             <p className="text-sm font-bold uppercase text-gray-400">Your Answer</p>
                             <p className="mt-2 text-lg text-gray-400">No answer submitted.</p>
+                            {isRevealed && (
+                                <>
+                                    <p className="mt-4 text-sm font-bold uppercase text-gray-400">
+                                        Correct Answer
+                                    </p>
+                                    <p className="text-lg text-gray-800 dark:text-gray-200">
+                                        {question?.questionAnswer ?? "—"}
+                                    </p>
+                                </>
+                            )}
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

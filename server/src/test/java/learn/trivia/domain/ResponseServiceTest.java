@@ -5,6 +5,7 @@ import learn.trivia.data.doubles.QuestionRepositoryDouble;
 import learn.trivia.data.doubles.ResponseRepositoryDouble;
 import learn.trivia.data.doubles.TeamRepositoryDouble;
 import learn.trivia.models.*;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ResponseServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new ResponseService(new ResponseRepositoryDouble(), new TeamRepositoryDouble(), new QuestionRepositoryDouble(), new GameRepositoryDouble());
+        service = new ResponseService(new ResponseRepositoryDouble(), new TeamRepositoryDouble(), new QuestionRepositoryDouble(), new GameRepositoryDouble(), new GameEventBroadcaster());
     }
     @Nested
     class Read {

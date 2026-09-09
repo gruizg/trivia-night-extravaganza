@@ -5,6 +5,7 @@ import learn.trivia.data.doubles.ThemeRepositoryDouble;
 import learn.trivia.models.Game;
 import learn.trivia.models.GameStatus;
 import learn.trivia.models.Theme;
+import learn.trivia.sse.GameEventBroadcaster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +19,7 @@ class GameServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new GameService(new GameRepositoryDouble(), new ThemeRepositoryDouble());
+        service = new GameService(new GameRepositoryDouble(), new ThemeRepositoryDouble(), new GameEventBroadcaster());
     }
 
     @Nested
