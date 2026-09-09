@@ -34,27 +34,27 @@ export default function Home() {
 
             {/* How a night works */}
             <section className="px-6 py-12 sm:px-12">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-2xl heading">
                     How a night works
                 </h2>
                 <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
                     <div>
-                        <p className="text-sm font-bold text-[var(--tn-pink)]">1. Pick a theme</p>
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-sm text-accent-bold">1. Pick a theme</p>
+                        <p className="mt-1 text-sm text-muted">
                             From anime marathons to hometown history — grab one from the Themes
-                            page, or build your own.
+                            page.
                         </p>
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-[var(--tn-pink)]">2. Gather your crew</p>
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-sm text-accent-bold">2. Gather your crew</p>
+                        <p className="mt-1 text-sm text-muted">
                             Share the game code, form teams, and let the trash talk begin
                             before the first question even loads.
                         </p>
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-[var(--tn-pink)]">3. Battle for the crown</p>
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-sm text-accent-bold">3. Battle for the crown</p>
+                        <p className="mt-1 text-sm text-muted">
                             Twenty questions, wagers on the line. Highest
                             score at the end takes the title.
                         </p>
@@ -64,14 +64,14 @@ export default function Home() {
 
             {/* Teaser strip */}
             <section className="flex flex-col gap-4 border-t border-gray-200 px-6 py-8 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between sm:px-12">
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-muted">
                     Curious where this whole thing came from?
                 </p>
                 <div className="flex gap-4 text-sm font-bold">
-                    <Link href="/about" className="text-[var(--tn-pink)] hover:underline">
+                    <Link href="/about" className="btn-link">
                         Read the origin story
                     </Link>
-                    <Link href="/rules" className="text-[var(--tn-pink)] hover:underline">
+                    <Link href="/rules" className="btn-link">
                         Check the rules
                     </Link>
                 </div>

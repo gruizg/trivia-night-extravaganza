@@ -14,13 +14,13 @@ function resolvePrompt(request, questions) {
 
 export default function AmendRequests({ requests, questions, onResolve }) {
     return (
-        <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-            <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
+        <div className="flex h-full min-h-0 flex-col card p-6">
+            <h2 className="mb-4 text-lg heading">
                 Amend Answer Requests
             </h2>
 
             {(!requests || requests.length === 0) ? (
-                <p className="text-sm text-gray-400">
+                <p className="text-hint">
                     No requests to amend an answer right now.
                 </p>
             ) : (
@@ -28,22 +28,22 @@ export default function AmendRequests({ requests, questions, onResolve }) {
                     {requests.map((request) => (
                         <li
                             key={request.responseId}
-                            className="rounded-lg border border-gray-200 p-4 text-sm dark:border-gray-800"
+                            className="list-row p-4 text-sm"
                         >
-                            <p className="font-semibold text-gray-500 dark:text-gray-400">
+                            <p className="font-semibold text-subtle">
                                 Team {request.team?.teamNumber ?? "?"}
                                 {request.team?.teamName ? ` · ${request.team.teamName}` : ""}
                             </p>
 
-                            <p className="mt-2 font-medium text-gray-900 dark:text-white">
+                            <p className="mt-2 text-emphasis">
                                 {resolvePrompt(request, questions)}
                             </p>
-                            <p className="mt-1 text-gray-600 dark:text-gray-400">
+                            <p className="mt-1 text-muted">
                                 Their answer: <span className="font-medium">{request.responseAnswer}</span>
                             </p>
 
                             {request.responseAmendReason && (
-                                <p className="mt-2 rounded bg-gray-50 p-2 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                                <p className="mt-2 rounded bg-gray-50 p-2 text-muted dark:bg-gray-800">
                                     "{request.responseAmendReason}"
                                 </p>
                             )}
@@ -51,13 +51,13 @@ export default function AmendRequests({ requests, questions, onResolve }) {
                             <div className="mt-3 flex gap-2">
                                 <button
                                     onClick={() => onResolve(request, true)}
-                                    className="rounded bg-green-100 px-3 py-1 text-sm font-bold text-green-700 hover:bg-green-200"
+                                    className="rounded toggle-success px-3 py-1 text-sm"
                                 >
                                     Accept
                                 </button>
                                 <button
                                     onClick={() => onResolve(request, false)}
-                                    className="rounded bg-red-100 px-3 py-1 text-sm font-bold text-red-700 hover:bg-red-200"
+                                    className="rounded toggle-error px-3 py-1 text-sm"
                                 >
                                     Deny
                                 </button>
