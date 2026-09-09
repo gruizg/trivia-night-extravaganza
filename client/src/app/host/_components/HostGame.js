@@ -5,7 +5,9 @@ import { useSearchParams } from "next/navigation";
 import ResponseRow from "@/app/host/_components/ResponseRow";
 import AmendRequests from "@/app/host/_components/AmendRequests";
 import TeamRankings from "@/app/host/_components/TeamRankings";
+import FinalRankings from "@/app/components/FinalRankings";
 import useGameEvents from "@/app/hooks/useGameEvents";
+import { loadAmendReasons, saveAmendReasons } from "@/app/host/_components/amendReasonCache";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,11 +20,64 @@ export default function HostGame() {
     const [questions, setQuestions] = useState([]);
     const [responses, setResponses] = useState([]);
     const [teams, setTeams] = useState([]);
+    const [amendRequests, setAmendRequests] = useState([]);
+    // The reason text is intentionally never persisted server-side (see
+    // ResponseService.requestAmend), so it only ever exists on the single
+    // SSE "response" event the request goes out on. This captures it into
+    // a browser-local cache (see amendReasonCache.js), keyed by
+    // responseId, so it survives this host reloading the page without the
+    // backend storing it anywhere.
+    const [amendReasons, setAmendReasons] = useState({});
     const [error, setError] = useState(null);
 
     const isAccepting = game?.gameStatus === "QUESTION";
     const isReviewing = game?.gameStatus === "REVIEW";
     const isRevealed = game?.gameStatus === "REVEAL";
+    const isGameEnded = game?.gameStatus === "ENDED";
+
+    const questionType = (question?.questionType ?? "").toUpperCase();
+    const isHalftime = questionType === "HALFTIME";
+    const isFinal = questionType === "FINAL";
+
+    const roundLabel = isHalftime
+        ? "Halftime Round"
+        : isFinal
+            ? "Final Round"
+            : question?.questionRound
+                ? `Round ${question.questionRound}`
+                : null;
+
+    // Every question in the same round as whatever's on screen, so the
+    // host can read off all of this round's categories before diving in -
+    // not just the one for the current question. HALFTIME/FINAL each form
+    // their own round rather than grouping by questionRound.
+    const roundQuestions = question
+        ? [...questions]
+            .filter((q) => {
+                const type = (q.questionType ?? "").toUpperCase();
+                if (isHalftime || isFinal) return type === questionType;
+                return (
+                    type !== "HALFTIME" &&
+                    type !== "FINAL" &&
+                    q.questionRound === question.questionRound
+                );
+            })
+            .sort((a, b) => a.questionOrder - b.questionOrder)
+        : [];
+
+    // Pull in any reasons already cached from a previous load of this game
+    // before this tab existed (e.g. the host refreshed the page).
+    useEffect(() => {
+        setAmendReasons(loadAmendReasons(gameId));
+    }, [gameId]);
+
+    function updateAmendReasons(updater) {
+        setAmendReasons((prev) => {
+            const next = updater(prev);
+            saveAmendReasons(gameId, next);
+            return next;
+        });
+    }
 
     const loadGame = useCallback(async () => {
         if (!gameId) return;
@@ -75,10 +130,20 @@ export default function HostGame() {
             if (!teamsRes.ok) return;
             const teamsData = await teamsRes.json();
 
+            const collectedAmendRequests = [];
+
             const withScores = await Promise.all(
                 teamsData.map(async (team) => {
                     const respRes = await fetch(`${API_URL}/response/team/${team.teamId}`);
                     const teamResponses = respRes.ok ? await respRes.json() : [];
+
+                    // Teams can request an amendment on any past response that
+                    // was marked incorrect, not just the current question, so
+                    // this scans every team's full response history rather
+                    // than the current-question response list above.
+                    teamResponses
+                        .filter((r) => r.responseStatus === "AMEND")
+                        .forEach((r) => collectedAmendRequests.push({ ...r, team }));
 
                     // Only sum points for responses where the question isn't the current unrevealed question
                     const score = teamResponses.reduce((sum, r) => {
@@ -95,6 +160,7 @@ export default function HostGame() {
             );
 
             setTeams(withScores);
+            setAmendRequests(collectedAmendRequests);
         } catch (err) {
             setError(err.message);
         }
@@ -112,10 +178,22 @@ export default function HostGame() {
         loadTeams();
     }, [loadTeams]);
 
-    // Pushed by the server whenever a team submits or the host grades a
-    // response, instead of re-fetching both lists on a timer.
+    // Pushed by the server whenever a team submits, requests an amendment,
+    // or the host grades a response, instead of re-fetching both lists on
+    // a timer.
     useGameEvents(gameId, {
-        response: () => {
+        response: (payload) => {
+            // Amendment requests broadcast an AmendedResponseDto - the
+            // untouched response entity plus the reason kept alongside it -
+            // rather than a plain Response, since the entity itself never
+            // carries the reason (only its status changes, to AMEND).
+            const amended = payload?.response;
+            if (amended?.responseStatus === "AMEND" && payload?.responseAmendReason) {
+                updateAmendReasons((prev) => ({
+                    ...prev,
+                    [amended.responseId]: payload.responseAmendReason,
+                }));
+            }
             loadResponses();
             loadTeams();
         },
@@ -140,6 +218,77 @@ export default function HostGame() {
                 );
             } else {
                 setError("Could not update that response.");
+            }
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
+    // Halftime ("tens") questions aren't a single correct/incorrect call -
+    // the host counts how many individual answers within one team's
+    // response were right (2 points each) and submits the total. The
+    // wager is always forced to 0 for halftime responses (see
+    // TeamGameView), so the backend's usual wager-based scoring for
+    // CORRECT/INCORRECT wouldn't award anything here; sending
+    // responsePoints explicitly overrides that for this response.
+    async function markHalftimeResponse(response, correctCount) {
+        const { responsePoints, ...rest } = response;
+
+        try {
+            const res = await fetch(`${API_URL}/response/${response.responseId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...rest,
+                    responseStatus: "CORRECT",
+                    responsePoints: correctCount * 2,
+                }),
+            });
+
+            if (res.ok) {
+                setResponses((prev) =>
+                    prev.filter((r) => r.responseId !== response.responseId)
+                );
+            } else {
+                setError("Could not update that response.");
+            }
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
+    async function resolveAmendRequest(request, accept) {
+        // `request` here is a display-only object: the real Response plus
+        // a `responseAmendReason` merged in just for AmendRequests to show
+        // (see the amendReasons map below). That field lives client-side
+        // only now - the entity itself never carries it - so it has to be
+        // stripped back out before PUTing, or the backend rejects the body
+        // as an unrecognized property.
+        const { responsePoints, responseAmendReason, ...rest } = request;
+
+        try {
+            const res = await fetch(`${API_URL}/response/${request.responseId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...rest,
+                    responseStatus: accept ? "CORRECT" : "INCORRECT",
+                }),
+            });
+
+            if (res.ok) {
+                setAmendRequests((prev) =>
+                    prev.filter((r) => r.responseId !== request.responseId)
+                );
+                setAmendReasons((prev) => {
+                    const next = { ...prev };
+                    delete next[request.responseId];
+                    saveAmendReasons(gameId, next);
+                    return next;
+                });
+                loadTeams();
+            } else {
+                setError("Could not resolve that amendment request.");
             }
         } catch (err) {
             setError(err.message);
@@ -240,6 +389,31 @@ export default function HostGame() {
         }
     }
 
+    // Only offered once the FINAL question has been revealed - there's no
+    // next question after it, so this replaces "Next Question" on that
+    // last screen. Reuses the same gameStatus field the rest of the flow
+    // already drives off of; teams pick this up over the same "game" SSE
+    // event as every other status change and switch to FinalRankings.
+    async function endGame() {
+        if (!game || !isRevealed || !isFinal) return;
+
+        try {
+            const res = await fetch(`${API_URL}/game/${gameId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...game, gameStatus: "ENDED" }),
+            });
+
+            if (res.ok) {
+                setGame(await res.json());
+            } else {
+                setError("Could not end the game.");
+            }
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
     if (!gameId) {
         return (
             <div>
@@ -247,6 +421,15 @@ export default function HostGame() {
                 <p className="text-gray-500">
                     No game selected. Start a game from the Themes page to host.
                 </p>
+            </div>
+        );
+    }
+
+    if (isGameEnded) {
+        return (
+            <div className="flex h-full flex-col">
+                <h1 className="mb-4 text-2xl font-bold">Host</h1>
+                <FinalRankings gameId={gameId} />
             </div>
         );
     }
@@ -262,9 +445,30 @@ export default function HostGame() {
             <div className="flex flex-1 min-h-0 flex-col gap-6 lg:flex-row">
                 <div className="flex min-h-0 flex-col gap-4 lg:min-w-0 lg:flex-1">
                     <div className="flex-1 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 overflow-y-auto">
-                        <h2 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">
-                            Current Question
-                        </h2>
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                                Current Question
+                            </h2>
+                            {roundLabel && (
+                                <span
+                                    className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${
+                                        isHalftime
+                                            ? "bg-amber-100 text-amber-700"
+                                            : isFinal
+                                                ? "bg-purple-100 text-purple-700"
+                                                : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                                    }`}
+                                >
+                                    {roundLabel}
+                                </span>
+                            )}
+                        </div>
+
+                        {question?.questionCategory && (
+                            <p className="mb-1 text-sm font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                                {question.questionCategory}
+                            </p>
+                        )}
                         <p className="mb-6 text-gray-700 dark:text-gray-300">
                             {question?.questionPrompt ?? "Waiting for a question..."}
                         </p>
@@ -275,6 +479,28 @@ export default function HostGame() {
                         <p className="text-gray-700 dark:text-gray-300">
                             {question?.questionAnswer ?? "—"}
                         </p>
+
+                        {roundQuestions.length > 0 && (
+                            <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/50">
+                                <h3 className="mb-2 text-sm font-bold uppercase text-gray-500 dark:text-gray-400">
+                                    {roundLabel ? `${roundLabel} Categories` : "Round Categories"}
+                                </h3>
+                                <ul className="flex flex-col gap-1">
+                                    {roundQuestions.map((q) => (
+                                        <li
+                                            key={q.questionId}
+                                            className={`text-sm ${
+                                                q.questionId === question?.questionId
+                                                    ? "font-bold text-gray-900 dark:text-white"
+                                                    : "text-gray-600 dark:text-gray-300"
+                                            }`}
+                                        >
+                                            {q.questionCategory ?? "Uncategorized"}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex-1" />
@@ -302,13 +528,23 @@ export default function HostGame() {
                                 Stop Incoming Answers
                             </button>
                         )}
-                        <button
-                            onClick={nextQuestion}
-                            disabled={!isRevealed}
-                            className="flex-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-600"
-                        >
-                            Next Question
-                        </button>
+                        {isFinal ? (
+                            <button
+                                onClick={endGame}
+                                disabled={!isRevealed}
+                                className="flex-1 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600"
+                            >
+                                End Game
+                            </button>
+                        ) : (
+                            <button
+                                onClick={nextQuestion}
+                                disabled={!isRevealed}
+                                className="flex-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-600"
+                            >
+                                Next Question
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -327,6 +563,8 @@ export default function HostGame() {
                                         key={response.responseId}
                                         response={response}
                                         onMark={markResponse}
+                                        onMarkHalftime={markHalftimeResponse}
+                                        isHalftime={isHalftime}
                                     />
                                 ))}
                             </ul>
@@ -334,7 +572,14 @@ export default function HostGame() {
                     </div>
 
                     <div className="flex flex-1 min-h-0 flex-col">
-                        <AmendRequests requests={[]} />
+                        <AmendRequests
+                            requests={amendRequests.map((r) => ({
+                                ...r,
+                                responseAmendReason: amendReasons[r.responseId],
+                            }))}
+                            questions={questions}
+                            onResolve={resolveAmendRequest}
+                        />
                     </div>
                 </div>
 
