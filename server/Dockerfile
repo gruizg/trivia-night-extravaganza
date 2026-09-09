@@ -15,7 +15,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copy built JAR from the build stage using exact pom.xml artifact defaults
-COPY --from=build /app/target/server-1.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Render assigns a dynamic port via $PORT
 EXPOSE 8080
