@@ -39,9 +39,6 @@ public class GameEventBroadcaster {
         emitter.onError(e -> remove(gameId, emitter));
 
         try {
-            // Send an initial event so the browser's EventSource has
-            // something to fire immediately instead of sitting silent
-            // until the next real update.
             emitter.send(SseEmitter.event().name("connected").data(gameId, MediaType.APPLICATION_JSON));
         } catch (IOException e) {
             remove(gameId, emitter);
