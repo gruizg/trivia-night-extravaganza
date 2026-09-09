@@ -6,7 +6,7 @@
 
     <groupId>learn.trivia</groupId>
     <artifactId>server</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>server</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
