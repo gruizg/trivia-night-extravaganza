@@ -1,4 +1,5 @@
 "use client"
+export const dynamic = 'force-dynamic';
 
 import { useCallback, useEffect, useState } from "react";
 import useGameEvents from "@/app/hooks/useGameEvents";

@@ -1,5 +1,5 @@
 import ThemeCard from "@/app/themes/_components/ThemeCard";
-
+export const dynamic = 'force-dynamic';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
